@@ -62,3 +62,12 @@ Andrew Johnson To Dos.
 8. ask the IAB if we should do it by sq or just the three levels (I am thinking sq sense we are already collecting that data, but we will do the number of workers by size of sq in bins)
 
 Sources: https://www.bls.gov/oes/tables.htm
+
+
+Methodology reasoning
+Why Gaps Exist for our Target Occupations
+The BLS suppresses data at the local level for two main reasons:
+
+The "Fewer Than Three" Rule (Confidentiality): If a rural BOS region or a small MSA only has one or two major employers employing a specific trade, the BLS hides the wage metrics so you cannot reverse-engineer what a specific local company pays its staff.
+
+Sample Size Limits (Statistical Reliability): If a remote region doesn't return enough completed employer surveys for a highly niche or highly executive role, the BLS suppresses the data because the sample size is too small to calculate a statistically sound average.
