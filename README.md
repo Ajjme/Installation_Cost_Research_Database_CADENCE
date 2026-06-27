@@ -58,7 +58,8 @@ Andrew Johnson To Dos.
     b. make cool cadence logo?
 5. research other color_continuous_scale="Viridis" styles
 6. contact Dr. Fan to check on progress 
-7. see if there are any good per sq databases about roofing material as that will inform what the UGA group should build
+Reach out to UGA team to gett official definisition f the roofing tyopes we are using
+7. see if there are any good per sq databases about roofing material as that will inform what the UGA group should build - Arcadious construction data base reach out
 8. ask the IAB if we should do it by sq or just the three levels (I am thinking sq sense we are already collecting that data, but we will do the number of workers by size of sq in bins)
 
 Sources: https://www.bls.gov/oes/tables.htm
