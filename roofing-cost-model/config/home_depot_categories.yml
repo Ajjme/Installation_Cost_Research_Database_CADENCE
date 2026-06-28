@@ -1,0 +1,19 @@
+# Home Depot roofing category configuration.
+#
+# Each category maps a logical key to a public listing URL and the material
+# group we expect the products in that category to belong to. The
+# expected_material_group is used only as a sanity / audit signal -- the actual
+# material_class is assigned by src/classify_materials.py.
+#
+# Leave a url empty ("") to register a category for future use without
+# scraping it yet.
+categories:
+  asphalt_shingles:
+    url: "https://www.homedepot.com/b/Building-Materials-Roofing-Roof-Shingles/N-5yc1vZc5rb"
+    expected_material_group: "asphalt"
+  metal_roofing:
+    url: ""
+    expected_material_group: "metal"
+  roof_tile:
+    url: ""
+    expected_material_group: "tile"

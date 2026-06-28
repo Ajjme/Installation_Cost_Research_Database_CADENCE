@@ -1,0 +1,31 @@
+sample_id,state,city,zip_code,address,latitude,longitude,source
+SEED-MA-001,MA,Boston,02108,,42.3587,-71.0636,static_seed
+SEED-MA-002,MA,Worcester,01608,,42.2626,-71.8023,static_seed
+SEED-MA-003,MA,Springfield,01103,,42.1015,-72.5898,static_seed
+SEED-MA-004,MA,Cambridge,02139,,42.3648,-71.1043,static_seed
+SEED-MA-005,MA,Lowell,01852,,42.6334,-71.3162,static_seed
+SEED-CT-001,CT,Hartford,06103,,41.7658,-72.6734,static_seed
+SEED-CT-002,CT,New Haven,06510,,41.3083,-72.9279,static_seed
+SEED-CT-003,CT,Bridgeport,06604,,41.1792,-73.1894,static_seed
+SEED-CT-004,CT,Stamford,06901,,41.0534,-73.5387,static_seed
+SEED-CT-005,CT,Waterbury,06702,,41.5582,-73.0515,static_seed
+SEED-RI-001,RI,Providence,02903,,41.8240,-71.4128,static_seed
+SEED-RI-002,RI,Warwick,02886,,41.7001,-71.4162,static_seed
+SEED-RI-003,RI,Cranston,02910,,41.7798,-71.4373,static_seed
+SEED-RI-004,RI,Pawtucket,02860,,41.8787,-71.3826,static_seed
+SEED-RI-005,RI,East Providence,02914,,41.8137,-71.3701,static_seed
+SEED-NH-001,NH,Manchester,03101,,42.9956,-71.4548,static_seed
+SEED-NH-002,NH,Nashua,03060,,42.7654,-71.4676,static_seed
+SEED-NH-003,NH,Concord,03301,,43.2081,-71.5376,static_seed
+SEED-NH-004,NH,Dover,03820,,43.1979,-70.8737,static_seed
+SEED-NH-005,NH,Rochester,03867,,43.3045,-70.9756,static_seed
+SEED-VT-001,VT,Burlington,05401,,44.4759,-73.2121,static_seed
+SEED-VT-002,VT,South Burlington,05403,,44.4669,-73.1709,static_seed
+SEED-VT-003,VT,Rutland,05701,,43.6106,-72.9726,static_seed
+SEED-VT-004,VT,Barre,05641,,44.1970,-72.5020,static_seed
+SEED-VT-005,VT,Montpelier,05602,,44.2601,-72.5754,static_seed
+SEED-ME-001,ME,Portland,04101,,43.6591,-70.2568,static_seed
+SEED-ME-002,ME,Lewiston,04240,,44.1004,-70.2148,static_seed
+SEED-ME-003,ME,Bangor,04401,,44.8012,-68.7778,static_seed
+SEED-ME-004,ME,South Portland,04106,,43.6415,-70.2409,static_seed
+SEED-ME-005,ME,Auburn,04210,,44.0979,-70.2312,static_seed

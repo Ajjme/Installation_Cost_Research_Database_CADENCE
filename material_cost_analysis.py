@@ -1,0 +1,2 @@
+# this code will access the producer price index apis and return the data in a pandas dataframe of what roofing related 
+# cost indexes exist for the last 10 years. The data will be used to analyze the cost of roofing materials over time.

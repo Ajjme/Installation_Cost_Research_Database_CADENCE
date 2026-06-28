@@ -51,15 +51,12 @@ that database will then be referenced in the main system
 we will produce intermidate outputs which are the interactive graphics of the nation in Stream lit that allows us to show the prices over time
 Andrew Johnson To Dos.
 1. Ask insurance group for access to Verisk
-2. fill gaps in map with national average
+
 3. center map in streamlit
-4. get a CIRCAD CADENCE Streamlit style that we can apply to all of our graphics
-    a. drop in logos
-    b. make cool cadence logo?
-5. research other color_continuous_scale="Viridis" styles
+
 6. contact Dr. Fan to check on progress 
 Reach out to UGA team to gett official definisition f the roofing tyopes we are using
-7. see if there are any good per sq databases about roofing material as that will inform what the UGA group should build - Arcadious construction data base reach out
+7. see if there are any good per sq databases about roofing material as that will inform what the UGA group should build 
 8. ask the IAB if we should do it by sq or just the three levels (I am thinking sq sense we are already collecting that data, but we will do the number of workers by size of sq in bins)
 
 Sources: https://www.bls.gov/oes/tables.htm

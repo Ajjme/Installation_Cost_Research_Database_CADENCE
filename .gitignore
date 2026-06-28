@@ -1,0 +1,42 @@
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Environment and local secret files
+.env
+.env.*
+*.env
+*.local
+*.secret
+*.secrets
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Nested project virtualenv and notebook checkpoints
+roofing-cost-model/.venv/
+roofing-cost-model/notebooks/.ipynb_checkpoints/
+
+# Generated local pages and scraped/raw data
+roofing-cost-model/local_pages/
+roofing-cost-model/data_raw/fred/*.csv
+roofing-cost-model/data_raw/home_depot/
+roofing-cost-model/data_raw/roofvista/responses/
+roofing-cost-model/data_raw/roofvista/schema_discovery/
+
+# Generated intermediate and output artifacts
+roofing-cost-model/data_intermediate/*.csv
+roofing-cost-model/data_intermediate/*.json
+roofing-cost-model/data_intermediate/*.jsonl
+roofing-cost-model/data_intermediate/*.parquet
+roofing-cost-model/data_output/*.csv
+roofing-cost-model/data_output/*.json
+roofing-cost-model/data_output/*.jsonl
+roofing-cost-model/data_output/*.html
+roofing-cost-model/data_output/roofvista/*.csv
+roofing-cost-model/data_output/roofvista/*.json
+roofing-cost-model/data_output/roofvista/*.jsonl
+roofing-cost-model/data_output/roofvista/*.html

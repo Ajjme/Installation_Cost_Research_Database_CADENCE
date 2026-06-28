@@ -1,0 +1,188 @@
+# BLS / FRED public price-index series for roofing material escalation.
+# =====================================================================
+#
+# PURPOSE
+# -------
+# These are NATIONAL, monthly public price *indexes* (mostly BLS Producer
+# Price Index series, surfaced via FRED). They are used ONLY to adjust
+# (escalate / backcast) material prices observed from retailer scraping
+# across time. They are NOT local price levels and carry no geography.
+#
+# HOW IT IS USED
+# --------------
+#   observed_price(t0)  -->  observed_price(t1)
+#   adjusted = observed_price(t0) * index(t1) / index(t0)
+#
+# IMPORTANT — VERIFY SERIES IDS BEFORE PRODUCTION USE
+# ---------------------------------------------------
+# FRED/BLS series IDs change, get discontinued, or are re-based. Every
+# `series_id` below is a CANDIDATE and is marked `verified: false`.
+# A human must confirm each ID at:
+#   * FRED:  https://fred.stlouisfed.org/  (search the series name)
+#   * BLS :  https://www.bls.gov/ppi/      (PPI commodity / industry data)
+# After confirming an ID resolves to a live monthly series, flip
+# `verified: true`. The fetcher will still attempt unverified series but
+# will log a warning so they are easy to audit.
+#
+# material_mapping VOCABULARY (must match classify_materials.MATERIAL_CLASSES
+# minus the catch-all classes):
+#   asphalt_3_tab, asphalt_architectural, asphalt_premium_architectural,
+#   metal_corrugated_panel, metal_standing_seam, tile_clay, tile_concrete
+#
+# priority: 1 = primary driver for the mapped materials,
+#           2 = secondary / input proxy,
+#           3 = optional context only.
+
+defaults:
+  # Default observation frequency requested from FRED.
+  frequency: m            # monthly
+  # FRED aggregation method when a series is not natively monthly.
+  aggregation_method: avg
+  # Earliest observation date to request (keeps payloads small + stable).
+  observation_start: "2000-01-01"
+
+series:
+  # ------------------------------------------------------------------
+  # ASPHALT ROOFING
+  # ------------------------------------------------------------------
+  - series_id: "WPU1361"                      # CANDIDATE — verify on FRED/BLS
+    series_name: "PPI: Prepared Asphalt, Tar Roofing and Siding Products"
+    source: bls            # surfaced through FRED as WPU1361
+    verified: false
+    material_mapping:
+      - asphalt_3_tab
+      - asphalt_architectural
+      - asphalt_premium_architectural
+    use_case: "Primary escalation index for asphalt shingle products."
+    priority: 1
+    notes: >-
+      BLS PPI commodity group 1361 "Prepared asphalt and tar roofing and
+      siding products". Best single public proxy for finished asphalt
+      shingle inflation. VERIFY ID — BLS commodity codes are periodically
+      restructured.
+
+  - series_id: "WPU058"                        # CANDIDATE — verify on FRED/BLS
+    series_name: "PPI: Asphalt and Other Petroleum and Coal Products (input proxy)"
+    source: bls
+    verified: false
+    material_mapping:
+      - asphalt_3_tab
+      - asphalt_architectural
+      - asphalt_premium_architectural
+    use_case: "Upstream asphalt feedstock cost proxy; cross-check vs WPU1361."
+    priority: 2
+    notes: >-
+      Petroleum/asphalt feedstock drives shingle cost. Use as a secondary
+      signal only — it is an input, not a finished roofing product.
+
+  # ------------------------------------------------------------------
+  # METAL ROOFING + METAL INPUT PROXIES
+  # ------------------------------------------------------------------
+  - series_id: "WPU1017"                        # CANDIDATE — verify on FRED/BLS
+    series_name: "PPI: Sheet Metal Products / Metal Roofing Products"
+    source: bls
+    verified: false
+    material_mapping:
+      - metal_corrugated_panel
+      - metal_standing_seam
+    use_case: "Primary escalation index for fabricated metal roofing panels."
+    priority: 1
+    notes: >-
+      Looking for fabricated sheet-metal roofing/siding products. If a
+      dedicated roofing PPI is unavailable, fall back to the steel-mill and
+      aluminum proxies below. VERIFY ID.
+
+  - series_id: "WPU1017"                        # CANDIDATE — verify; steel mill proxy
+    series_name: "PPI: Steel Mill Products"
+    source: bls
+    verified: false
+    material_mapping:
+      - metal_corrugated_panel
+      - metal_standing_seam
+    use_case: "Steel input proxy for steel roofing panels."
+    priority: 2
+    notes: >-
+      BLS PPI "Steel mill products" (commodity 1017). Input proxy for
+      galvanized / Galvalume steel panels. VERIFY ID — note the placeholder
+      currently duplicates the sheet-metal candidate and MUST be corrected.
+
+  - series_id: "WPU10250"                       # CANDIDATE — verify; aluminum proxy
+    series_name: "PPI: Aluminum Mill Shapes / Aluminum Products"
+    source: bls
+    verified: false
+    material_mapping:
+      - metal_corrugated_panel
+      - metal_standing_seam
+    use_case: "Aluminum input proxy for aluminum roofing panels."
+    priority: 2
+    notes: >-
+      Aluminum mill shapes proxy for aluminum standing-seam / corrugated
+      panels. VERIFY ID.
+
+  # ------------------------------------------------------------------
+  # TILE ROOFING (CLAY + CONCRETE) INPUT PROXIES
+  # ------------------------------------------------------------------
+  - series_id: "WPU1322"                         # CANDIDATE — verify; clay proxy
+    series_name: "PPI: Clay Construction Products (ex refractories) / Clay Tile Proxy"
+    source: bls
+    verified: false
+    material_mapping:
+      - tile_clay
+    use_case: "Clay building-material proxy for clay roof tile escalation."
+    priority: 1
+    notes: >-
+      No dedicated clay *roof* tile PPI is generally published; clay
+      construction products is the closest public proxy. Treat as
+      approximate. VERIFY ID.
+
+  - series_id: "WPU133"                           # CANDIDATE — verify; concrete proxy
+    series_name: "PPI: Concrete Products / Concrete Tile Proxy"
+    source: bls
+    verified: false
+    material_mapping:
+      - tile_concrete
+    use_case: "Concrete products proxy for concrete roof tile escalation."
+    priority: 1
+    notes: >-
+      BLS PPI concrete products group. Proxy for concrete roof tile. Roof
+      tile is a small slice of this group, so treat as approximate. VERIFY ID.
+
+  # ------------------------------------------------------------------
+  # AGGREGATE / CONTEXT PROXIES (apply to ALL material classes)
+  # ------------------------------------------------------------------
+  - series_id: "WPUSI012011"                      # CANDIDATE — verify; construction materials
+    series_name: "PPI: Construction Materials (aggregate)"
+    source: bls
+    verified: false
+    material_mapping:
+      - asphalt_3_tab
+      - asphalt_architectural
+      - asphalt_premium_architectural
+      - metal_corrugated_panel
+      - metal_standing_seam
+      - tile_clay
+      - tile_concrete
+    use_case: "Broad construction-materials inflation context / sanity check."
+    priority: 3
+    notes: >-
+      Aggregate "inputs to construction materials" special index. Useful as
+      a fallback escalator and as a cross-check against material-specific
+      series. VERIFY ID.
+
+  - series_id: "PCU484121484121"                  # CANDIDATE — verify; freight proxy (optional)
+    series_name: "PPI: General Freight Trucking, Long-Distance Truckload (optional)"
+    source: bls
+    verified: false
+    material_mapping:
+      - asphalt_3_tab
+      - asphalt_architectural
+      - asphalt_premium_architectural
+      - metal_corrugated_panel
+      - metal_standing_seam
+      - tile_clay
+      - tile_concrete
+    use_case: "Optional freight / delivered-cost adjustment proxy."
+    priority: 3
+    notes: >-
+      Heavy roofing materials carry meaningful freight cost. Optional —
+      enable only if delivered-price modeling is needed. VERIFY ID.

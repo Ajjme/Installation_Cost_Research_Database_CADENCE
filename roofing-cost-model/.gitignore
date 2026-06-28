@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Captured pages and persistent browser profile from --save-page
+local_pages/
+
+# Generated data (keep the directories via .gitkeep, ignore contents)
+data_raw/home_depot/20*/
+data_intermediate/*.parquet
+data_intermediate/*.csv
+data_output/*.csv

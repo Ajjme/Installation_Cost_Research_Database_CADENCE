@@ -1,0 +1,19 @@
+# Core data handling
+pandas>=2.0
+pyyaml>=6.0
+
+# Parquet output (either engine works)
+pyarrow>=14.0
+
+# Scraping (requests path) + FRED/BLS index fetching
+requests>=2.31
+beautifulsoup4>=4.12
+
+# Index analysis / notebook plotting
+matplotlib>=3.8
+
+# Optional browser fallback (install separately with `playwright install chromium`)
+# playwright>=1.40
+
+# Testing
+pytest>=7.4
