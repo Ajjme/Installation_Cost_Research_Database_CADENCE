@@ -1,0 +1,8 @@
+pandas>=2.0
+openpyxl>=3.1
+pyarrow>=14.0
+geopandas>=0.14
+duckdb>=1.0
+plotly>=5.18
+streamlit>=1.30
+pytest>=7.4

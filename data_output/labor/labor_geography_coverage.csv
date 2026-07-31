@@ -1,0 +1,578 @@
+AREA,AREA_TITLE,PRIM_STATE,GEOGRAPHY_TYPE,COVERAGE_STATUS
+0014100,,,msa,geometry_only
+0015680,,,msa,geometry_only
+0016060,,,msa,geometry_only
+0017460,,,msa,geometry_only
+0019060,,,msa,geometry_only
+0019180,,,msa,geometry_only
+0019380,,,msa,geometry_only
+0020700,,,msa,geometry_only
+0031460,,,msa,geometry_only
+0035100,,,msa,geometry_only
+0036140,,,msa,geometry_only
+0038220,,,msa,geometry_only
+0039140,,,msa,geometry_only
+0041900,,,msa,geometry_only
+0045540,,,msa,geometry_only
+0070750,,,msa,geometry_only
+0070900,,,msa,geometry_only
+0071650,,,msa,geometry_only
+0071950,,,msa,geometry_only
+0072400,,,msa,geometry_only
+0072850,,,msa,geometry_only
+0073050,,,msa,geometry_only
+0073450,,,msa,geometry_only
+0074500,,,msa,geometry_only
+0074650,,,msa,geometry_only
+0074950,,,msa,geometry_only
+0075550,,,msa,geometry_only
+0075700,,,msa,geometry_only
+0076450,,,msa,geometry_only
+0076600,,,msa,geometry_only
+0076750,,,msa,geometry_only
+0076900,,,msa,geometry_only
+0077200,,,msa,geometry_only
+0078100,,,msa,geometry_only
+0078700,,,msa,geometry_only
+0079600,,,msa,geometry_only
+2500006,,,msa,geometry_only
+2800001,,,msa,geometry_only
+2800002,,,msa,geometry_only
+2800003,,,msa,geometry_only
+2800004,,,msa,geometry_only
+3700004,,,msa,geometry_only
+4500002,,,msa,geometry_only
+4500004,,,msa,geometry_only
+4500006,,,msa,geometry_only
+4900006,,,msa,geometry_only
+4900007,,,msa,geometry_only
+0010180,"Abilene, TX",TX,msa,matched
+0010380,"Aguadilla, PR",PR,msa,matched
+0010420,"Akron, OH",OH,msa,matched
+0010500,"Albany, GA",GA,msa,matched
+0010540,"Albany, OR",OR,msa,matched
+0010580,"Albany-Schenectady-Troy, NY",NY,msa,matched
+0010740,"Albuquerque, NM",NM,msa,matched
+0010780,"Alexandria, LA",LA,msa,matched
+0010900,"Allentown-Bethlehem-Easton, PA-NJ",PA,msa,matched
+0011020,"Altoona, PA",PA,msa,matched
+0011100,"Amarillo, TX",TX,msa,matched
+0011180,"Ames, IA",IA,msa,matched
+0011260,"Anchorage, AK",AK,msa,matched
+0011460,"Ann Arbor, MI",MI,msa,matched
+0011500,"Anniston-Oxford, AL",AL,msa,matched
+0011540,"Appleton, WI",WI,msa,matched
+0011640,"Arecibo, PR",PR,msa,matched
+0011700,"Asheville, NC",NC,msa,matched
+0012020,"Athens-Clarke County, GA",GA,msa,matched
+0012060,"Atlanta-Sandy Springs-Roswell, GA",GA,msa,matched
+0012100,"Atlantic City-Hammonton, NJ",NJ,msa,matched
+0012220,"Auburn-Opelika, AL",AL,msa,matched
+0012260,"Augusta-Richmond County, GA-SC",GA,msa,matched
+0012420,"Austin-Round Rock-San Marcos, TX",TX,msa,matched
+0012540,"Bakersfield-Delano, CA",CA,msa,matched
+0012580,"Baltimore-Columbia-Towson, MD",MD,msa,matched
+0012940,"Baton Rouge, LA",LA,msa,matched
+0012980,"Battle Creek, MI",MI,msa,matched
+0013020,"Bay City, MI",MI,msa,matched
+0013140,"Beaumont-Port Arthur, TX",TX,msa,matched
+0013220,"Beckley, WV",WV,msa,matched
+0013380,"Bellingham, WA",WA,msa,matched
+0013460,"Bend, OR",OR,msa,matched
+0013740,"Billings, MT",MT,msa,matched
+0013780,"Binghamton, NY",NY,msa,matched
+0013820,"Birmingham, AL",AL,msa,matched
+0013900,"Bismarck, ND",ND,msa,matched
+0013980,"Blacksburg-Christiansburg-Radford, VA",VA,msa,matched
+0014010,"Bloomington, IL",IL,msa,matched
+0014020,"Bloomington, IN",IN,msa,matched
+0014260,"Boise City, ID",ID,msa,matched
+0014500,"Boulder, CO",CO,msa,matched
+0014540,"Bowling Green, KY",KY,msa,matched
+0014740,"Bremerton-Silverdale-Port Orchard, WA",WA,msa,matched
+0015180,"Brownsville-Harlingen, TX",TX,msa,matched
+0015260,"Brunswick-St. Simons, GA",GA,msa,matched
+0015380,"Buffalo-Cheektowaga, NY",NY,msa,matched
+0015500,"Burlington, NC",NC,msa,matched
+0015940,"Canton-Massillon, OH",OH,msa,matched
+0015980,"Cape Coral-Fort Myers, FL",FL,msa,matched
+0016020,"Cape Girardeau, MO-IL",MO,msa,matched
+0016180,"Carson City, NV",NV,msa,matched
+0016220,"Casper, WY",WY,msa,matched
+0016300,"Cedar Rapids, IA",IA,msa,matched
+0016540,"Chambersburg, PA",PA,msa,matched
+0016580,"Champaign-Urbana, IL",IL,msa,matched
+0016620,"Charleston, WV",WV,msa,matched
+0016700,"Charleston-North Charleston, SC",SC,msa,matched
+0016740,"Charlotte-Concord-Gastonia, NC-SC",NC,msa,matched
+0016820,"Charlottesville, VA",VA,msa,matched
+0016860,"Chattanooga, TN-GA",TN,msa,matched
+0016940,"Cheyenne, WY",WY,msa,matched
+0016980,"Chicago-Naperville-Elgin, IL-IN",IL,msa,matched
+0017020,"Chico, CA",CA,msa,matched
+0017140,"Cincinnati, OH-KY-IN",OH,msa,matched
+0017300,"Clarksville, TN-KY",TN,msa,matched
+0017420,"Cleveland, TN",TN,msa,matched
+0017660,"Coeur d'Alene, ID",ID,msa,matched
+0017780,"College Station-Bryan, TX",TX,msa,matched
+0017820,"Colorado Springs, CO",CO,msa,matched
+0017860,"Columbia, MO",MO,msa,matched
+0017900,"Columbia, SC",SC,msa,matched
+0017980,"Columbus, GA-AL",GA,msa,matched
+0018020,"Columbus, IN",IN,msa,matched
+0018140,"Columbus, OH",OH,msa,matched
+0018580,"Corpus Christi, TX",TX,msa,matched
+0018700,"Corvallis, OR",OR,msa,matched
+0018880,"Crestview-Fort Walton Beach-Destin, FL",FL,msa,matched
+0019100,"Dallas-Fort Worth-Arlington, TX",TX,msa,matched
+0019140,"Dalton, GA",GA,msa,matched
+0019300,"Daphne-Fairhope-Foley, AL",AL,msa,matched
+0019340,"Davenport-Moline-Rock Island, IA-IL",IA,msa,matched
+0019460,"Decatur, AL",AL,msa,matched
+0019500,"Decatur, IL",IL,msa,matched
+0019660,"Deltona-Daytona Beach-Ormond Beach, FL",FL,msa,matched
+0019740,"Denver-Aurora-Centennial, CO",CO,msa,matched
+0019780,"Des Moines-West Des Moines, IA",IA,msa,matched
+0019820,"Detroit-Warren-Dearborn, MI",MI,msa,matched
+0020020,"Dothan, AL",AL,msa,matched
+0020100,"Dover, DE",DE,msa,matched
+0020220,"Dubuque, IA",IA,msa,matched
+0020260,"Duluth, MN-WI",MN,msa,matched
+0020500,"Durham-Chapel Hill, NC",NC,msa,matched
+0020740,"Eau Claire, WI",WI,msa,matched
+0020940,"El Centro, CA",CA,msa,matched
+0021060,"Elizabethtown, KY",KY,msa,matched
+0021140,"Elkhart-Goshen, IN",IN,msa,matched
+0021300,"Elmira, NY",NY,msa,matched
+0021340,"El Paso, TX",TX,msa,matched
+0021420,"Enid, OK",OK,msa,matched
+0021500,"Erie, PA",PA,msa,matched
+0021660,"Eugene-Springfield, OR",OR,msa,matched
+0021780,"Evansville, IN",IN,msa,matched
+0021820,"Fairbanks-College, AK",AK,msa,matched
+0022020,"Fargo, ND-MN",ND,msa,matched
+0022140,"Farmington, NM",NM,msa,matched
+0022180,"Fayetteville, NC",NC,msa,matched
+0022220,"Fayetteville-Springdale-Rogers, AR",AR,msa,matched
+0022380,"Flagstaff, AZ",AZ,msa,matched
+0022420,"Flint, MI",MI,msa,matched
+0022500,"Florence, SC",SC,msa,matched
+0022520,"Florence-Muscle Shoals, AL",AL,msa,matched
+0022540,"Fond du Lac, WI",WI,msa,matched
+0022660,"Fort Collins-Loveland, CO",CO,msa,matched
+0022900,"Fort Smith, AR-OK",AR,msa,matched
+0023060,"Fort Wayne, IN",IN,msa,matched
+0023420,"Fresno, CA",CA,msa,matched
+0023460,"Gadsden, AL",AL,msa,matched
+0023540,"Gainesville, FL",FL,msa,matched
+0023580,"Gainesville, GA",GA,msa,matched
+0023900,"Gettysburg, PA",PA,msa,matched
+0024020,"Glens Falls, NY",NY,msa,matched
+0024140,"Goldsboro, NC",NC,msa,matched
+0024220,"Grand Forks, ND-MN",ND,msa,matched
+0024260,"Grand Island, NE",NE,msa,matched
+0024300,"Grand Junction, CO",CO,msa,matched
+0024340,"Grand Rapids-Wyoming-Kentwood, MI",MI,msa,matched
+0024420,"Grants Pass, OR",OR,msa,matched
+0024500,"Great Falls, MT",MT,msa,matched
+0024540,"Greeley, CO",CO,msa,matched
+0024580,"Green Bay, WI",WI,msa,matched
+0024660,"Greensboro-High Point, NC",NC,msa,matched
+0024780,"Greenville, NC",NC,msa,matched
+0024860,"Greenville-Anderson-Greer, SC",SC,msa,matched
+0025020,"Guayama, PR",PR,msa,matched
+0025060,"Gulfport-Biloxi, MS",MS,msa,matched
+0025180,"Hagerstown-Martinsburg, MD-WV",MD,msa,matched
+0025220,"Hammond, LA",LA,msa,matched
+0025260,"Hanford-Corcoran, CA",CA,msa,matched
+0025420,"Harrisburg-Carlisle, PA",PA,msa,matched
+0025500,"Harrisonburg, VA",VA,msa,matched
+0025620,"Hattiesburg, MS",MS,msa,matched
+0025860,"Hickory-Lenoir-Morganton, NC",NC,msa,matched
+0025940,"Hilton Head Island-Bluffton-Port Royal, SC",SC,msa,matched
+0025980,"Hinesville, GA",GA,msa,matched
+0026140,"Homosassa Springs, FL",FL,msa,matched
+0026300,"Hot Springs, AR",AR,msa,matched
+0026380,"Houma-Bayou Cane-Thibodaux, LA",LA,msa,matched
+0026420,"Houston-Pasadena-The Woodlands, TX",TX,msa,matched
+0026580,"Huntington-Ashland, WV-KY-OH",WV,msa,matched
+0026620,"Huntsville, AL",AL,msa,matched
+0026820,"Idaho Falls, ID",ID,msa,matched
+0026900,"Indianapolis-Carmel-Greenwood, IN",IN,msa,matched
+0026980,"Iowa City, IA",IA,msa,matched
+0027060,"Ithaca, NY",NY,msa,matched
+0027100,"Jackson, MI",MI,msa,matched
+0027140,"Jackson, MS",MS,msa,matched
+0027180,"Jackson, TN",TN,msa,matched
+0027260,"Jacksonville, FL",FL,msa,matched
+0027340,"Jacksonville, NC",NC,msa,matched
+0027500,"Janesville-Beloit, WI",WI,msa,matched
+0027620,"Jefferson City, MO",MO,msa,matched
+0027740,"Johnson City, TN",TN,msa,matched
+0027780,"Johnstown, PA",PA,msa,matched
+0027860,"Jonesboro, AR",AR,msa,matched
+0027900,"Joplin, MO-KS",MO,msa,matched
+0027980,"Kahului-Wailuku, HI",HI,msa,matched
+0028020,"Kalamazoo-Portage, MI",MI,msa,matched
+0028100,"Kankakee, IL",IL,msa,matched
+0028140,"Kansas City, MO-KS",MO,msa,matched
+0028420,"Kennewick-Richland, WA",WA,msa,matched
+0028660,"Killeen-Temple, TX",TX,msa,matched
+0028700,"Kingsport-Bristol, TN-VA",TN,msa,matched
+0028740,"Kingston, NY",NY,msa,matched
+0028940,"Knoxville, TN",TN,msa,matched
+0029020,"Kokomo, IN",IN,msa,matched
+0029100,"La Crosse-Onalaska, WI-MN",WI,msa,matched
+0029180,"Lafayette, LA",LA,msa,matched
+0029200,"Lafayette-West Lafayette, IN",IN,msa,matched
+0029340,"Lake Charles, LA",LA,msa,matched
+0029420,"Lake Havasu City-Kingman, AZ",AZ,msa,matched
+0029460,"Lakeland-Winter Haven, FL",FL,msa,matched
+0029540,"Lancaster, PA",PA,msa,matched
+0029620,"Lansing-East Lansing, MI",MI,msa,matched
+0029700,"Laredo, TX",TX,msa,matched
+0029740,"Las Cruces, NM",NM,msa,matched
+0029820,"Las Vegas-Henderson-North Las Vegas, NV",NV,msa,matched
+0029940,"Lawrence, KS",KS,msa,matched
+0030020,"Lawton, OK",OK,msa,matched
+0030140,"Lebanon, PA",PA,msa,matched
+0030300,"Lewiston, ID-WA",ID,msa,matched
+0030460,"Lexington-Fayette, KY",KY,msa,matched
+0030620,"Lima, OH",OH,msa,matched
+0030700,"Lincoln, NE",NE,msa,matched
+0030780,"Little Rock-North Little Rock-Conway, AR",AR,msa,matched
+0030860,"Logan, UT-ID",UT,msa,matched
+0030980,"Longview, TX",TX,msa,matched
+0031020,"Longview-Kelso, WA",WA,msa,matched
+0031080,"Los Angeles-Long Beach-Anaheim, CA",CA,msa,matched
+0031140,"Louisville/Jefferson County, KY-IN",KY,msa,matched
+0031180,"Lubbock, TX",TX,msa,matched
+0031340,"Lynchburg, VA",VA,msa,matched
+0031420,"Macon-Bibb County, GA",GA,msa,matched
+0031540,"Madison, WI",WI,msa,matched
+0031740,"Manhattan, KS",KS,msa,matched
+0031860,"Mankato, MN",MN,msa,matched
+0031900,"Mansfield, OH",OH,msa,matched
+0032420,"Mayaguez, PR",PR,msa,matched
+0032580,"McAllen-Edinburg-Mission, TX",TX,msa,matched
+0032780,"Medford, OR",OR,msa,matched
+0032820,"Memphis, TN-MS-AR",TN,msa,matched
+0032900,"Merced, CA",CA,msa,matched
+0033100,"Miami-Fort Lauderdale-West Palm Beach, FL",FL,msa,matched
+0033140,"Michigan City-La Porte, IN",IN,msa,matched
+0033220,"Midland, MI",MI,msa,matched
+0033260,"Midland, TX",TX,msa,matched
+0033340,"Milwaukee-Waukesha, WI",WI,msa,matched
+0033460,"Minneapolis-St. Paul-Bloomington, MN-WI",MN,msa,matched
+0033540,"Missoula, MT",MT,msa,matched
+0033660,"Mobile, AL",AL,msa,matched
+0033700,"Modesto, CA",CA,msa,matched
+0033740,"Monroe, LA",LA,msa,matched
+0033780,"Monroe, MI",MI,msa,matched
+0033860,"Montgomery, AL",AL,msa,matched
+0034060,"Morgantown, WV",WV,msa,matched
+0034100,"Morristown, TN",TN,msa,matched
+0034580,"Mount Vernon-Anacortes, WA",WA,msa,matched
+0034620,"Muncie, IN",IN,msa,matched
+0034740,"Muskegon-Norton Shores, MI",MI,msa,matched
+0034820,"Myrtle Beach-Conway-North Myrtle Beach, SC",SC,msa,matched
+0034900,"Napa, CA",CA,msa,matched
+0034940,"Naples-Marco Island, FL",FL,msa,matched
+0034980,"Nashville-Davidson--Murfreesboro--Franklin, TN",TN,msa,matched
+0035380,"New Orleans-Metairie, LA",LA,msa,matched
+0035620,"New York-Newark-Jersey City, NY-NJ",NY,msa,matched
+0035660,"Niles, MI",MI,msa,matched
+0035840,"North Port-Bradenton-Sarasota, FL",FL,msa,matched
+0036100,"Ocala, FL",FL,msa,matched
+0036220,"Odessa, TX",TX,msa,matched
+0036260,"Ogden, UT",UT,msa,matched
+0036420,"Oklahoma City, OK",OK,msa,matched
+0036500,"Olympia-Lacey-Tumwater, WA",WA,msa,matched
+0036540,"Omaha, NE-IA",NE,msa,matched
+0036740,"Orlando-Kissimmee-Sanford, FL",FL,msa,matched
+0036780,"Oshkosh-Neenah, WI",WI,msa,matched
+0036980,"Owensboro, KY",KY,msa,matched
+0037100,"Oxnard-Thousand Oaks-Ventura, CA",CA,msa,matched
+0037340,"Palm Bay-Melbourne-Titusville, FL",FL,msa,matched
+0037460,"Panama City-Panama City Beach, FL",FL,msa,matched
+0037620,"Parkersburg-Vienna, WV",WV,msa,matched
+0037860,"Pensacola-Ferry Pass-Brent, FL",FL,msa,matched
+0037900,"Peoria, IL",IL,msa,matched
+0037980,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",PA,msa,matched
+0038060,"Phoenix-Mesa-Chandler, AZ",AZ,msa,matched
+0038300,"Pittsburgh, PA",PA,msa,matched
+0038540,"Pocatello, ID",ID,msa,matched
+0038660,"Ponce, PR",PR,msa,matched
+0038900,"Portland-Vancouver-Hillsboro, OR-WA",OR,msa,matched
+0038940,"Port St. Lucie, FL",FL,msa,matched
+0039340,"Provo-Orem-Lehi, UT",UT,msa,matched
+0039380,"Pueblo, CO",CO,msa,matched
+0039460,"Punta Gorda, FL",FL,msa,matched
+0039540,"Racine-Mount Pleasant, WI",WI,msa,matched
+0039580,"Raleigh-Cary, NC",NC,msa,matched
+0039660,"Rapid City, SD",SD,msa,matched
+0039740,"Reading, PA",PA,msa,matched
+0039820,"Redding, CA",CA,msa,matched
+0039900,"Reno, NV",NV,msa,matched
+0040060,"Richmond, VA",VA,msa,matched
+0040140,"Riverside-San Bernardino-Ontario, CA",CA,msa,matched
+0040220,"Roanoke, VA",VA,msa,matched
+0040340,"Rochester, MN",MN,msa,matched
+0040380,"Rochester, NY",NY,msa,matched
+0040420,"Rockford, IL",IL,msa,matched
+0040580,"Rocky Mount, NC",NC,msa,matched
+0040660,"Rome, GA",GA,msa,matched
+0040900,"Sacramento-Roseville-Folsom, CA",CA,msa,matched
+0040980,"Saginaw, MI",MI,msa,matched
+0041060,"St. Cloud, MN",MN,msa,matched
+0041100,"St. George, UT",UT,msa,matched
+0041140,"St. Joseph, MO-KS",MO,msa,matched
+0041180,"St. Louis, MO-IL",MO,msa,matched
+0041420,"Salem, OR",OR,msa,matched
+0041500,"Salinas, CA",CA,msa,matched
+0041540,"Salisbury, MD",MD,msa,matched
+0041620,"Salt Lake City-Murray, UT",UT,msa,matched
+0041660,"San Angelo, TX",TX,msa,matched
+0041700,"San Antonio-New Braunfels, TX",TX,msa,matched
+0041740,"San Diego-Chula Vista-Carlsbad, CA",CA,msa,matched
+0041860,"San Francisco-Oakland-Fremont, CA",CA,msa,matched
+0041940,"San Jose-Sunnyvale-Santa Clara, CA",CA,msa,matched
+0041980,"San Juan-Bayamon-Caguas, PR",PR,msa,matched
+0042020,"San Luis Obispo-Paso Robles, CA",CA,msa,matched
+0042100,"Santa Cruz-Watsonville, CA",CA,msa,matched
+0042140,"Santa Fe, NM",NM,msa,matched
+0042200,"Santa Maria-Santa Barbara, CA",CA,msa,matched
+0042220,"Santa Rosa-Petaluma, CA",CA,msa,matched
+0042340,"Savannah, GA",GA,msa,matched
+0042540,"Scranton--Wilkes-Barre, PA",PA,msa,matched
+0042660,"Seattle-Tacoma-Bellevue, WA",WA,msa,matched
+0042680,"Sebastian-Vero Beach-West Vero Corridor, FL",FL,msa,matched
+0042700,"Sebring, FL",FL,msa,matched
+0043100,"Sheboygan, WI",WI,msa,matched
+0043300,"Sherman-Denison, TX",TX,msa,matched
+0043340,"Shreveport-Bossier City, LA",LA,msa,matched
+0043420,"Sierra Vista-Douglas, AZ",AZ,msa,matched
+0043580,"Sioux City, IA-NE-SD",IA,msa,matched
+0043620,"Sioux Falls, SD-MN",SD,msa,matched
+0043780,"South Bend-Mishawaka, IN-MI",IN,msa,matched
+0043900,"Spartanburg, SC",SC,msa,matched
+0044060,"Spokane-Spokane Valley, WA",WA,msa,matched
+0044100,"Springfield, IL",IL,msa,matched
+0044180,"Springfield, MO",MO,msa,matched
+0044220,"Springfield, OH",OH,msa,matched
+0044300,"State College, PA",PA,msa,matched
+0044420,"Staunton-Stuarts Draft, VA",VA,msa,matched
+0044700,"Stockton-Lodi, CA",CA,msa,matched
+0044940,"Sumter, SC",SC,msa,matched
+0045060,"Syracuse, NY",NY,msa,matched
+0045220,"Tallahassee, FL",FL,msa,matched
+0045300,"Tampa-St. Petersburg-Clearwater, FL",FL,msa,matched
+0045460,"Terre Haute, IN",IN,msa,matched
+0045500,"Texarkana, TX-AR",TX,msa,matched
+0045780,"Toledo, OH",OH,msa,matched
+0045820,"Topeka, KS",KS,msa,matched
+0045940,"Trenton-Princeton, NJ",NJ,msa,matched
+0046060,"Tucson, AZ",AZ,msa,matched
+0046140,"Tulsa, OK",OK,msa,matched
+0046220,"Tuscaloosa, AL",AL,msa,matched
+0046300,"Twin Falls, ID",ID,msa,matched
+0046340,"Tyler, TX",TX,msa,matched
+0046520,"Urban Honolulu, HI",HI,msa,matched
+0046540,"Utica-Rome, NY",NY,msa,matched
+0046660,"Valdosta, GA",GA,msa,matched
+0046700,"Vallejo, CA",CA,msa,matched
+0047020,"Victoria, TX",TX,msa,matched
+0047220,"Vineland, NJ",NJ,msa,matched
+0047260,"Virginia Beach-Chesapeake-Norfolk, VA-NC",VA,msa,matched
+0047300,"Visalia, CA",CA,msa,matched
+0047380,"Waco, TX",TX,msa,matched
+0047460,"Walla Walla, WA",WA,msa,matched
+0047580,"Warner Robins, GA",GA,msa,matched
+0047900,"Washington-Arlington-Alexandria, DC-VA-MD-WV",DC,msa,matched
+0047940,"Waterloo-Cedar Falls, IA",IA,msa,matched
+0048060,"Watertown-Fort Drum, NY",NY,msa,matched
+0048140,"Wausau, WI",WI,msa,matched
+0048260,"Weirton-Steubenville, WV-OH",WV,msa,matched
+0048300,"Wenatchee-East Wenatchee, WA",WA,msa,matched
+0048540,"Wheeling, WV-OH",WV,msa,matched
+0048620,"Wichita, KS",KS,msa,matched
+0048660,"Wichita Falls, TX",TX,msa,matched
+0048700,"Williamsport, PA",PA,msa,matched
+0048900,"Wilmington, NC",NC,msa,matched
+0049020,"Winchester, VA-WV",VA,msa,matched
+0049180,"Winston-Salem, NC",NC,msa,matched
+0049420,"Yakima, WA",WA,msa,matched
+0049620,"York-Hanover, PA",PA,msa,matched
+0049660,"Youngstown-Warren, OH",OH,msa,matched
+0049700,"Yuba City, CA",CA,msa,matched
+0049740,"Yuma, AZ",AZ,msa,matched
+0100001,Northwest Alabama nonmetropolitan area,AL,bos,matched
+0100002,Northeast Alabama nonmetropolitan area,AL,bos,matched
+0100003,Southwest Alabama nonmetropolitan area,AL,bos,matched
+0100004,Southeast Alabama nonmetropolitan area,AL,bos,matched
+0200006,Alaska nonmetropolitan area,AK,bos,matched
+0400001,Arizona nonmetropolitan area,AZ,bos,matched
+0500001,North Arkansas nonmetropolitan area,AR,bos,matched
+0500002,East Arkansas nonmetropolitan area,AR,bos,matched
+0500003,West Arkansas nonmetropolitan area,AR,bos,matched
+0500004,South Arkansas nonmetropolitan area,AR,bos,matched
+0600003,North Coast Region of California nonmetropolitan area,CA,bos,matched
+0600006,Eastern Sierra-Mother Lode Region of California nonmetropolitan area,CA,bos,matched
+0600007,North Valley-Northern Mountains Region of California nonmetropolitan area,CA,bos,matched
+0800001,Eastern and Southern Colorado nonmetropolitan area,CO,bos,matched
+0800002,Southwest Colorado nonmetropolitan area,CO,bos,matched
+0800003,Northwest Colorado nonmetropolitan area,CO,bos,matched
+0900001,Connecticut nonmetropolitan area,CT,bos,matched
+1200003,South Florida nonmetropolitan area,FL,bos,matched
+1200006,North Florida nonmetropolitan area,FL,bos,matched
+1300001,North Georgia nonmetropolitan area,GA,bos,matched
+1300002,Middle Georgia nonmetropolitan area,GA,bos,matched
+1300003,East Georgia nonmetropolitan area,GA,bos,matched
+1300004,South Georgia nonmetropolitan area,GA,bos,matched
+1500001,Hawaii / Kauai nonmetropolitan area,HI,bos,matched
+1600006,Northwestern Idaho nonmetropolitan area,ID,bos,matched
+1600007,Southeast-Central Idaho nonmetropolitan area,ID,bos,matched
+1700001,Northwest Illinois nonmetropolitan area,IL,bos,matched
+1700002,West Central Illinois nonmetropolitan area,IL,bos,matched
+1700003,East Central Illinois nonmetropolitan area,IL,bos,matched
+1700004,South Illinois nonmetropolitan area,IL,bos,matched
+1800001,Northern Indiana nonmetropolitan area,IN,bos,matched
+1800002,Central Indiana nonmetropolitan area,IN,bos,matched
+1800003,Southern Indiana nonmetropolitan area,IN,bos,matched
+1900001,Northeast Iowa nonmetropolitan area,IA,bos,matched
+1900002,Northwest Iowa nonmetropolitan area,IA,bos,matched
+1900003,Southwest Iowa nonmetropolitan area,IA,bos,matched
+1900004,Southeast Iowa nonmetropolitan area,IA,bos,matched
+2000006,Kansas nonmetropolitan area,KS,bos,matched
+2100001,West Kentucky nonmetropolitan area,KY,bos,matched
+2100002,South Central Kentucky nonmetropolitan area,KY,bos,matched
+2100003,Central Kentucky nonmetropolitan area,KY,bos,matched
+2100004,East Kentucky nonmetropolitan area,KY,bos,matched
+2200002,Central Louisiana nonmetropolitan area,LA,bos,matched
+2200003,Northeast Louisiana nonmetropolitan area,LA,bos,matched
+2200006,Southwest Louisiana nonmetropolitan area,LA,bos,matched
+2300001,Northeast Maine nonmetropolitan area,ME,bos,matched
+2300002,Southwest Maine nonmetropolitan area,ME,bos,matched
+2400006,Maryland nonmetropolitan area,MD,bos,matched
+2600001,Upper Peninsula of Michigan nonmetropolitan area,MI,bos,matched
+2600002,Northern Michigan nonmetropolitan area,MI,bos,matched
+2600003,Mid Michigan nonmetropolitan area,MI,bos,matched
+2600004,Southern Michigan nonmetropolitan area,MI,bos,matched
+2700001,Northwest Minnesota nonmetropolitan area,MN,bos,matched
+2700002,Northeast Minnesota nonmetropolitan area,MN,bos,matched
+2700003,Southwest Minnesota nonmetropolitan area,MN,bos,matched
+2700004,Southeast Minnesota nonmetropolitan area,MN,bos,matched
+2900001,Central Missouri nonmetropolitan area,MO,bos,matched
+2900002,North Missouri nonmetropolitan area,MO,bos,matched
+2900003,Southeast Missouri nonmetropolitan area,MO,bos,matched
+2900004,Southwest Missouri nonmetropolitan area,MO,bos,matched
+3000003,Southwest Montana nonmetropolitan area,MT,bos,matched
+3000004,West Montana nonmetropolitan area,MT,bos,matched
+3000006,East-Central Montana nonmetropolitan area,MT,bos,matched
+3100001,Northwest Nebraska nonmetropolitan area,NE,bos,matched
+3100003,Northeast Nebraska nonmetropolitan area,NE,bos,matched
+3100006,South Nebraska nonmetropolitan area,NE,bos,matched
+3200006,Balance of Nevada nonmetropolitan area,NV,bos,matched
+3300001,Northern New Hampshire nonmetropolitan area,NH,bos,matched
+3300002,Central New Hampshire nonmetropolitan area,NH,bos,matched
+3300006,Southwestern New Hampshire nonmetropolitan area,NH,bos,matched
+3500006,Northern New Mexico nonmetropolitan area,NM,bos,matched
+3500007,Eastern New Mexico nonmetropolitan area,NM,bos,matched
+3600001,Capital/Northern New York nonmetropolitan area,NY,bos,matched
+3600004,Southwest New York nonmetropolitan area,NY,bos,matched
+3600006,Central East New York nonmetropolitan area,NY,bos,matched
+3700001,Eastern North Carolina nonmetropolitan area,NC,bos,matched
+3700002,Central North Carolina nonmetropolitan area,NC,bos,matched
+3700003,Western North Carolina nonmetropolitan area,NC,bos,matched
+3800006,West North Dakota nonmetropolitan area,ND,bos,matched
+3800007,East North Dakota nonmetropolitan area,ND,bos,matched
+3900001,West Northwestern Ohio nonmetropolitan area,OH,bos,matched
+3900002,North Northeastern Ohio nonmetropolitan area (noncontiguous),OH,bos,matched
+3900003,Eastern Ohio nonmetropolitan area,OH,bos,matched
+3900004,Southern Ohio nonmetropolitan area,OH,bos,matched
+4000001,Northeast Oklahoma nonmetropolitan area,OK,bos,matched
+4000002,Northwest Oklahoma nonmetropolitan area,OK,bos,matched
+4000003,Southwest Oklahoma nonmetropolitan area,OK,bos,matched
+4000004,Southeast Oklahoma nonmetropolitan area,OK,bos,matched
+4100006,Coast Oregon nonmetropolitan area,OR,bos,matched
+4100007,Central Oregon nonmetropolitan area,OR,bos,matched
+4100008,Eastern Oregon nonmetropolitan area,OR,bos,matched
+4200001,Northwestern Pennsylvania nonmetropolitan area,PA,bos,matched
+4200002,Northeastern Pennsylvania nonmetropolitan area,PA,bos,matched
+4200003,Central Pennsylvania nonmetropolitan area,PA,bos,matched
+4600002,East South Dakota nonmetropolitan area,SD,bos,matched
+4600003,West South Dakota nonmetropolitan area,SD,bos,matched
+4700001,West Tennessee nonmetropolitan area,TN,bos,matched
+4700002,South Central Tennessee nonmetropolitan area,TN,bos,matched
+4700003,North Central Tennessee nonmetropolitan area,TN,bos,matched
+4700004,East Tennessee nonmetropolitan area,TN,bos,matched
+4800001,Northwestern Region of Texas nonmetropolitan area,TX,bos,matched
+4800002,North Region of Texas nonmetropolitan area,TX,bos,matched
+4800003,Eastern Region of Texas nonmetropolitan area,TX,bos,matched
+4800004,Hill Country Region of Texas nonmetropolitan area,TX,bos,matched
+4800005,Border Region of Texas nonmetropolitan area,TX,bos,matched
+4800006,Coastal Plains Region of Texas nonmetropolitan area,TX,bos,matched
+5000001,Southern Vermont nonmetropolitan area,VT,bos,matched
+5000002,Northern Vermont nonmetropolitan area,VT,bos,matched
+5100001,Southwest Virginia nonmetropolitan area,VA,bos,matched
+5100002,Southside Virginia nonmetropolitan area,VA,bos,matched
+5100003,Northeast Virginia nonmetropolitan area,VA,bos,matched
+5100004,Northwest Virginia nonmetropolitan area,VA,bos,matched
+5300006,Western Washington nonmetropolitan area,WA,bos,matched
+5300007,Eastern Washington nonmetropolitan area,WA,bos,matched
+5400001,Southern West Virginia nonmetropolitan area,WV,bos,matched
+5400002,Northern West Virginia nonmetropolitan area,WV,bos,matched
+5500001,Northwestern Wisconsin nonmetropolitan area,WI,bos,matched
+5500002,Northeastern Wisconsin nonmetropolitan area,WI,bos,matched
+5500003,South Central Wisconsin nonmetropolitan area,WI,bos,matched
+5500004,Western Wisconsin nonmetropolitan area,WI,bos,matched
+5600006,Western Wyoming nonmetropolitan area,WY,bos,matched
+5600007,Eastern Wyoming nonmetropolitan area,WY,bos,matched
+7200006,Puerto Rico nonmetropolitan area,PR,bos,matched
+7800001,Virgin Islands,VI,bos,matched
+0011200,"Amherst Town-Northampton, MA",MA,msa,wage_only
+0012620,"Bangor, ME",ME,msa,wage_only
+0012700,"Barnstable Town, MA",MA,msa,wage_only
+0014460,"Boston-Cambridge-Newton, MA-NH",MA,msa,wage_only
+0014580,"Bozeman, MT",MT,msa,wage_only
+0014860,"Bridgeport-Stamford-Danbury, CT",CT,msa,wage_only
+0015540,"Burlington-South Burlington, VT",VT,msa,wage_only
+0017410,"Cleveland, OH",OH,msa,wage_only
+0019430,"Dayton-Kettering-Beavercreek, OH",OH,msa,wage_only
+0020580,"Eagle Pass, TX",TX,msa,wage_only
+0025540,"Hartford-West Hartford-East Hartford, CT",CT,msa,wage_only
+0025740,"Helena, MT",MT,msa,wage_only
+0028450,"Kenosha, WI",WI,msa,wage_only
+0028880,"Kiryas Joel-Poughkeepsie-Newburgh, NY",NY,msa,wage_only
+0030340,"Lewiston-Auburn, ME",ME,msa,wage_only
+0030500,"Lexington Park, MD",MD,msa,wage_only
+0031700,"Manchester-Nashua, NH",NH,msa,wage_only
+0033500,"Minot, ND",ND,msa,wage_only
+0035300,"New Haven, CT",CT,msa,wage_only
+0035980,"Norwich-New London-Willimantic, CT",CT,msa,wage_only
+0037140,"Paducah, KY-IL",KY,msa,wage_only
+0038240,"Pinehurst-Southern Pines, NC",NC,msa,wage_only
+0038340,"Pittsfield, MA",MA,msa,wage_only
+0038860,"Portland-South Portland, ME",ME,msa,wage_only
+0039150,"Prescott Valley-Prescott, AZ",AZ,msa,wage_only
+0039300,"Providence-Warwick, RI-MA",RI,msa,wage_only
+0041780,"Sandusky, OH",OH,msa,wage_only
+0043640,"Slidell-Mandeville-Covington, LA",LA,msa,wage_only
+0044140,"Springfield, MA",MA,msa,wage_only
+0045900,"Traverse City, MI",MI,msa,wage_only
+0047930,"Waterbury-Shelton, CT",CT,msa,wage_only
+0048680,"Wildwood-The Villages, FL",FL,msa,wage_only
+0049340,"Worcester, MA",MA,msa,wage_only
+1000005,Sussex Delaware nonmetropolitan area,DE,bos,wage_only
+2500001,Massachusetts nonmetropolitan area,MA,bos,wage_only
+2800005,West Delta Mississippi nonmetropolitan area,MS,bos,wage_only
+2800006,Upper East Mississippi nonmetropolitan area,MS,bos,wage_only
+2800007,Lower West Mississippi nonmetropolitan area,MS,bos,wage_only
+2800008,Lower East Mississippi nonmetropolitan area,MS,bos,wage_only
+4200004,Southwestern Pennsylvania nonmetropolitan area,PA,bos,wage_only
+4500003,Northwestern South Carolina nonmetropolitan area,SC,bos,wage_only
+4500005,Southern South Carolina nonmetropolitan area,SC,bos,wage_only
+4500007,Northeastern South Carolina nonmetropolitan area,SC,bos,wage_only
+4900010,Wasatch Front Fringe Utah nonmetropolitan area,UT,bos,wage_only
+4900011,High Desert Utah nonmetropolitan area,UT,bos,wage_only
+6600001,Guam,GU,bos,wage_only

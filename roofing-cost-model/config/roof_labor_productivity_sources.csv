@@ -1,0 +1,2 @@
+source_id,title,publisher,url,publication_year,accessed_date,units,applicable_roof_types,evidence_type,limitations
+ASSUMPTION_V1,CADENCE version 1 provisional calibration assumptions,CADENCE research team,,,2026-07-31,person-hours per square foot,all,assumption,"Placeholder baseline rates, adjustment factors, occupation shares, and startup hours; requires calibration against documented field evidence before production use."

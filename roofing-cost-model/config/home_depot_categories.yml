@@ -14,6 +14,9 @@ categories:
   metal_roofing:
     url: ""
     expected_material_group: "metal"
+  metal_shingles:
+    url: ""
+    expected_material_group: "metal"
   roof_tile:
     url: ""
     expected_material_group: "tile"

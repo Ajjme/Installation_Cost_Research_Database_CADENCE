@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import math
 import re
 from pathlib import Path
 from typing import Any, Optional
@@ -79,6 +80,11 @@ _COVERAGE_PATTERNS = (
     re.compile(r"(\d+(?:\.\d+)?)\s*square\s*f(?:ee|oo)?t", re.IGNORECASE),
     re.compile(r"(\d+(?:\.\d+)?)\s*sq\.?\s*ft", re.IGNORECASE),
 )
+_PANEL_DIMENSIONS_RE = re.compile(
+    r"(\d+(?:\.\d+)?)\s*(in(?:ch(?:es)?)?\.?|ft(?:\.|\b)|feet)\s*x\s*"
+    r"(\d+(?:\.\d+)?)\s*(in(?:ch(?:es)?)?\.?|ft(?:\.|\b)|feet)",
+    re.IGNORECASE,
+)
 
 
 def parse_price(value: Any) -> Optional[float]:
@@ -89,7 +95,8 @@ def parse_price(value: Any) -> Optional[float]:
     if value is None:
         return None
     if isinstance(value, (int, float)) and not isinstance(value, bool):
-        return float(value)
+        parsed = float(value)
+        return parsed if math.isfinite(parsed) else None
     match = _PRICE_RE.search(str(value).replace(",", ""))
     if not match:
         return None
@@ -107,7 +114,8 @@ def parse_coverage_sqft(value: Any) -> Optional[float]:
     if value is None:
         return None
     if isinstance(value, (int, float)) and not isinstance(value, bool):
-        return float(value)
+        parsed = float(value)
+        return parsed if math.isfinite(parsed) else None
     text = str(value)
     for pattern in _COVERAGE_PATTERNS:
         match = pattern.search(text)
@@ -117,6 +125,26 @@ def parse_coverage_sqft(value: Any) -> Optional[float]:
             except ValueError:
                 continue
     return None
+
+
+def parse_panel_dimensions_sqft(value: Any) -> Optional[float]:
+    """Calculate panel area when both dimensions are explicit in a product name."""
+    if value is None:
+        return None
+    text = str(value)
+    if "panel" not in text.lower():
+        return None
+    match = _PANEL_DIMENSIONS_RE.search(text)
+    if not match:
+        return None
+
+    def _to_feet(measurement: str, unit: str) -> float:
+        value_in_unit = float(measurement)
+        return value_in_unit / 12.0 if unit.lower().startswith("in") else value_in_unit
+
+    width = _to_feet(match.group(1), match.group(2))
+    length = _to_feet(match.group(3), match.group(4))
+    return width * length
 
 
 def price_per_sqft(price_per_unit: Optional[float], coverage_sqft: Optional[float]) -> Optional[float]:
@@ -148,7 +176,7 @@ def bulk_discount_pct(
 
 
 def _coverage_flag(coverage: Optional[float]) -> str:
-    if coverage is None:
+    if coverage is None or pd.isna(coverage):
         return "missing"
     if coverage < COVERAGE_MIN_SQFT or coverage > COVERAGE_MAX_SQFT:
         return "suspicious"
@@ -220,7 +248,7 @@ def normalize(df: pd.DataFrame, geo: Optional[pd.DataFrame] = None) -> pd.DataFr
             parsed = parse_coverage_sqft(row.get(fallback_field))
             if parsed is not None:
                 return parsed
-        return None
+        return parse_panel_dimensions_sqft(row.get("product_name"))
 
     df["coverage_sqft_per_unit"] = df.apply(_resolve_coverage, axis=1)
 

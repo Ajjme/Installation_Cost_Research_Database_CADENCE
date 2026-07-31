@@ -6,10 +6,10 @@ roofing **square** (100 sq ft), classifies products into a controlled material
 taxonomy, and aggregates to ZIP / state / CBSA / national levels for downstream
 analysis.
 
-This is the first build: **asphalt shingles only**, retail and public bulk
-pricing. The code is structured so metal panels and clay/concrete tile can be
-added later by filling in URLs in the category config — no code changes needed
-for classification (rules already cover those classes).
+The initial collection targets **asphalt shingles**, retail and public bulk
+pricing. The same pipeline can collect metal panels and clay/concrete roof tile
+after their public category URLs are added to the category config. Classification
+rules already cover those material types.
 
 ## Explain it to me like I'm 5
 
@@ -17,65 +17,98 @@ for classification (rules already cover those classes).
 costs in different parts of the country. This tool looks at Home Depot's website,
 grabs the prices, and turns them into tidy spreadsheets we can study.
 
-**Why do I have to help?** Home Depot has a "robot bouncer" that blocks programs
-from reading its pages automatically. But it's totally fine for a *person* to
-open a page in a normal browser. So the tool drives a real browser, and **you**
-act as the human: you open the page and tell the tool "okay, grab this one."
+**Why do I have to help?** Home Depot frequently blocks automated browsers. The
+reliable collection method is to open each public category page in your normal
+Chrome browser, set the target ZIP/store, and save the fully loaded page. The
+tool then reads that local HTML without contacting Home Depot.
 
 **What will happen when I run it?**
 
-1. You run one command (below). A **Chrome window pops open** on a Home Depot
-   shingles page.
-2. In that window, you set your store / ZIP code if it asks (just like normal
-   shopping), and wait until you can see the shingle products with prices.
-3. You switch back to the **terminal**. It is waiting and showing a prompt like:
+1. Open regular Chrome from the Applications menu, not the automated Playwright
+   browser.
+2. Open the configured Home Depot category page and complete any challenge
+   normally. Do not repeatedly refresh the page.
+3. Set the target store or delivery ZIP and confirm the page displays that ZIP.
+4. Wait for product names and prices to appear, then scroll through the page so
+   lazy-loaded products are present.
+5. Select **File > Save Page As**, choose **Webpage, Complete**, and use the
+   filename `<category>_<zip>_p<page>.html`. For example:
 
+   ```text
+   asphalt_shingles_27701_p0.html
    ```
-   [zip=90001 category=asphalt_shingles page=0]
-     URL: https://www.homedepot.com/b/...Roof-Shingles/...
-     Set store/ZIP if needed, then press Enter to capture (s=skip, q=quit):
-   ```
 
-   - Press **Enter** → it saves that page. ✅
-   - Type **s** then Enter → skip this page.
-   - Type **q** then Enter → quit.
+6. Save all asphalt, metal, and other roofing captures collected that day in one
+   dated directory, such as `local_pages/2026-07-31/`. The HTML filenames retain
+   the category and ZIP, so materials and locations remain attributable.
+7. Run the batch command below. No browser is needed after the HTML has been
+    saved.
 
-   If it warns that the page "looks like a challenge page," that means the robot
-   bouncer showed up — fix it in the browser (solve the puzzle / refresh) and
-   press Enter again.
-4. When you're done capturing, you run **two more commands** that clean up the
-   prices and build the final spreadsheets. No browser needed for those.
+### Batch command for all roofing materials
 
-**The whole thing, copy-paste:**
+The batch runner detects category keys from the saved filenames and performs
+ingestion, normalization, and aggregation in one command:
 
-```powershell
-# 0) one-time setup
-cd roofing-cost-model
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-pip install playwright
-playwright install chromium
-
-# 1) CAPTURE — a browser opens; set your ZIP, then press Enter in the terminal
-python -m src.retailers.home_depot --save-page --zip-codes 90001 --categories asphalt_shingles
-
-# 2) READ the saved page(s) into raw product rows
-python -m src.retailers.home_depot --local-html-dir local_pages --categories asphalt_shingles
-
-# 3) CLEAN UP prices into per-square numbers
-python -m src.normalize_products --input data_raw/home_depot/<DATE>/home_depot_products_raw.jsonl --output data_intermediate/home_depot_products_normalized.parquet
-
-# 4) BUILD the summary spreadsheets (by ZIP / state / metro / national)
-python -m src.aggregate_prices --input data_intermediate/home_depot_products_normalized.parquet --out-dir data_output
+```bash
+python -m src.process_home_depot_batch \
+  --local-html-dir local_pages/2026-07-31
 ```
 
-Replace `<DATE>` with today's folder name (e.g. `2026-06-27`) that step 2
-created under `data_raw/home_depot/`. Your final results land in
-`data_output/` as CSV files. That's it!
+The local directory name becomes the batch name. Each batch therefore receives
+separate raw, normalized, and aggregate paths:
 
-> Want more ZIPs or pages? Add them: `--zip-codes 90001,33101` and
-> `--max-pages 2`. The tool will walk you through each page the same way.
+```text
+data_raw/home_depot/<batch-name>/
+data_intermediate/home_depot_products_normalized_<batch-name>.parquet
+data_intermediate/home_depot_products_normalized_<batch-name>.csv
+data_output/home_depot/<batch-name>/
+```
+
+The command refuses to overwrite any existing batch artifact. Use one new dated
+directory for each collection day. Saved filenames must still follow
+`<category>_<zip>_p<page>.html`; both `asphalt_shingles` and `metal_shingles`
+are registered category keys.
+
+Metal panel area is calculated only when the listing includes both dimensions,
+such as `26 in. x 8 ft.`. Products that show only panel length remain in the
+normalized files with their unit price and `coverage_flag = missing`, but are
+excluded from per-square aggregates rather than receiving an assumed width.
+
+Confirm the log reports `Extracted N products` for every HTML file. If a file
+reports `No products extracted`, recapture or update that page before treating
+the dated batch as complete.
+
+**How do we collect metal or clay/ceramic roofing?**
+
+Think of each roofing type as a different aisle in the same store:
+
+1. In regular Chrome, use Home Depot's **Building Materials > Roofing** menus
+   to find a page containing the actual roof covering. For metal, collect roof
+   panels, not flashing or screws. For clay/ceramic, collect clay, terra-cotta,
+   or concrete roof tile, not floor tile or decorations.
+2. Copy the clean category URL and add it to `config/home_depot_categories.yml`.
+   Put the metal URL under `metal_roofing` and the clay/concrete tile URL under
+   `roof_tile`.
+3. Set the ZIP, wait for prices, scroll through the products, and save the page
+   exactly as you did for asphalt. Use the matching names:
+
+   ```text
+   metal_roofing_27701_p0.html
+   roof_tile_27701_p0.html
+   ```
+
+4. Save each page in the same dated folder as the asphalt captures, such as
+   `local_pages/2026-07-31/`.
+5. Run `src.process_home_depot_batch` once for the dated folder. It discovers
+   every configured category from the HTML filenames.
+6. Start with one ZIP and one page. Continue to more ZIPs only after the ingest
+   reports at least one product and the normalized CSV has sensible coverage
+   and price-per-square values.
+
+Metal panels and roof tiles describe coverage differently from shingle bundles.
+If their normalized rows say `coverage_flag = missing`, the saved products are
+not ready for price comparison yet; the coverage parser must first be taught to
+understand panel dimensions or tile pieces-per-square.
 
 ## Project layout
 
@@ -106,43 +139,48 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
-# Optional browser fallback (only if the requests path returns no products):
+# Optional automated browser helper. Manual capture in regular Chrome is more
+# reliable when Home Depot challenges automated browsers.
 # pip install playwright
 # playwright install chromium
 ```
 
 ## Pipeline
 
-The pipeline is three stages: **scrape → normalize → aggregate**.
+The batch command performs **ingest → normalize → aggregate** for every HTML
+file in one dated directory.
 
-### 1. Scrape
+### Capture and process
+
+Open each configured category page in regular Chrome, set the target ZIP/store,
+scroll until product cards and prices have loaded, and save it as **Webpage,
+Complete**. Keep batches in dated directories and name every file
+`<category>_<zip>_p<page>.html`. The category portion must exactly match a key
+in `config/home_depot_categories.yml`.
+
+Then process the saved batch:
 
 ```powershell
-python -m src.retailers.home_depot --zip-codes 90001,33101 --categories asphalt_shingles --max-pages 2
+python -m src.process_home_depot_batch --local-html-dir local_pages/2026-07-31
 ```
 
-Key options:
+Batch options:
 
 | Flag | Default | Purpose |
 | --- | --- | --- |
-| `--zip-codes` | seed file | Comma-separated ZIP override |
-| `--categories` | all in config | Comma-separated category-key override |
-| `--out-dir` | `data_raw/home_depot` | Raw output root |
-| `--max-pages` | unlimited | Page cap per ZIP/category (use for testing) |
-| `--sleep-seconds` | `2` | Base delay between page requests |
-| `--headless` | off | Run the browser fallback headless |
-| `--no-playwright` | off | Disable the browser fallback entirely |
-| `--local-html-dir` | none | Parse pre-saved HTML files instead of hitting the network |
-| `--save-page` | off | Guided browser capture of category pages (see below) |
-| `--save-dir` | `local_pages` | Destination directory for `--save-page` captures |
+| `--local-html-dir` | required | Dated directory containing all saved material and ZIP pages |
+| `--batch-name` | directory name | Explicit output key for a nonstandard source-directory name |
+| `--raw-root` | `data_raw/home_depot` | Raw JSONL output root |
+| `--intermediate-dir` | `data_intermediate` | Normalized Parquet and CSV directory |
+| `--output-root` | `data_output/home_depot` | Aggregate CSV output root |
 
-Raw output for each run day:
+Outputs for each dated batch:
 
 ```
-data_raw/home_depot/YYYY-MM-DD/
-  raw/<category>_<zip>_p<page>.html     # raw HTML for audit
-  home_depot_products_raw.jsonl         # extracted product rows
-  home_depot_errors.jsonl               # per-request failures
+data_raw/home_depot/<batch-name>/YYYY-MM-DD/home_depot_products_raw.jsonl
+data_intermediate/home_depot_products_normalized_<batch-name>.parquet
+data_intermediate/home_depot_products_normalized_<batch-name>.csv
+data_output/home_depot/<batch-name>/home_depot_material_price_*.csv
 ```
 
 Every row records `scrape_timestamp`, `source_url`, and `raw_html_path` for
@@ -163,60 +201,82 @@ Home Depot fronts its site with **Akamai Bot Manager**. In practice:
 Reliably bypassing this would require residential proxies and sensor/CAPTCHA
 solving — an arms race that this project intentionally does **not** pursue
 (per the "do not scrape aggressively / public endpoints only" constraints).
-Instead, use one of these sanctioned routes:
+Instead, use one of these routes:
 
-1. **Local-HTML ingestion (recommended, zero-cost).** Open the category page in
-   your normal browser, save the page as HTML, drop it in a folder named with
-   the convention `<category>_<zip>_pN.html`, and run:
+1. **Manual local-HTML ingestion (recommended, zero-cost).** Open the category
+  page in regular Chrome, set and verify the ZIP/store, wait for products and
+  prices, scroll through the results, and save the page as **Webpage,
+  Complete**. Store it in a dated batch directory using the convention
+  `<category>_<zip>_pN.html`, then run:
 
    ```powershell
-   python -m src.retailers.home_depot --local-html-dir local_pages --categories asphalt_shingles
+   python -m src.process_home_depot_batch --local-html-dir local_pages/2026-07-31
    ```
 
    The saved pages flow through the **identical** extract → normalize →
-   aggregate pipeline (`source_method = "local_html"`).
-
-   To standardize that capture step, use the built-in guided helper instead of
-   saving by hand:
-
-   ```powershell
-   python -m src.retailers.home_depot --save-page --zip-codes 90001 --categories asphalt_shingles
-   ```
-
-   This opens a real browser (persistent profile under
-   `local_pages/.browser_profile`, so an Akamai challenge stays solved between
-   captures). For each category page it pauses at a terminal prompt — set your
-   store/ZIP in the browser, then press **Enter** to capture (`s` to skip, `q`
-   to quit). Files are written as `<category>_<zip>_pN.html` ready for
-   `--local-html-dir`. Use `--max-pages N` to walk pagination and `--save-dir`
-   to change the destination. If a capture still looks like a challenge page,
-   the helper warns so you can re-capture.
+  aggregate pipeline (`source_method = "local_html"`). Verify that ingestion
+  extracts at least one product before continuing.
 
 2. **A managed unblocker / official feed.** Point the fetch step at a licensed
    service (e.g. an enterprise web-unlocker API) or Home Depot's official
    product API/affiliate feed. The parser only needs the page HTML, so any
    sanctioned source can supply it.
 
-### 2. Normalize
-
-```powershell
-python -m src.normalize_products --input data_raw/home_depot/YYYY-MM-DD/home_depot_products_raw.jsonl --output data_intermediate/home_depot_products_normalized.parquet
-```
-
-Produces a Parquet **and** a sibling CSV with one row per product, including
+Normalization produces a Parquet **and** a sibling CSV with one row per product, including
 `price_per_square`, `bulk_price_per_square`, `bulk_discount_pct`,
 `material_class`, joined geography, and a `coverage_flag`
 (`ok` / `missing` / `suspicious`). Missing coverage is **not** imputed.
 
-### 3. Aggregate
-
-```powershell
-python -m src.aggregate_prices --input data_intermediate/home_depot_products_normalized.parquet --out-dir data_output
-```
-
-Writes four CSVs (ZIP, state, CBSA, national), each grouped by
+Aggregation writes four CSVs (ZIP, state, CBSA, national), each grouped by
 `scrape_date × retailer × geography × material_class` with median / p25 / p75 /
 min / max price per square, product and store counts, and median bulk metrics.
+
+## Collecting other roofing types
+
+The category keys `metal_roofing` and `roof_tile` already exist in
+`config/home_depot_categories.yml`, but their URLs are intentionally blank.
+Use the following process to add them.
+
+1. In regular Chrome, navigate through Home Depot's public **Building Materials
+   > Roofing** menus to the narrowest listing page that contains field-covering
+   products. For metal, target roof panels rather than flashing or accessories.
+   For tile, target clay, ceramic/terra-cotta, or concrete roof tiles rather
+   than floor tile, siding, or decorative products.
+2. Remove optional tracking parameters from the URL, reload it, and confirm it
+   still opens the intended category. Add that stable URL to the appropriate
+   entry in `config/home_depot_categories.yml`.
+3. Choose a consistent ZIP sample from `config/geo_seed_zips.csv`. For every
+   ZIP, set and visibly confirm the store/location before saving the page.
+4. Save complete pages in a new dated batch directory. Use names such as:
+
+   ```text
+   metal_roofing_27701_p0.html
+   roof_tile_27701_p0.html
+   ```
+
+   If the listing has additional pages, save them as `p1`, `p2`, and so on.
+5. Process the dated folder and require a positive extracted-product count for
+   each file before expanding the sample:
+
+   ```powershell
+   python -m src.process_home_depot_batch --local-html-dir local_pages/2026-07-31
+   ```
+
+6. Normalize the pilot and inspect `product_name`, `material_class`,
+   `coverage_sqft_per_unit`, `price_per_square`, and `coverage_flag`. The
+   existing classifier recognizes corrugated/ribbed metal, standing-seam metal,
+   clay/terra-cotta tile, concrete tile, and unspecified tile. Add focused
+   classifier tests if actual product wording uses terms not covered by those
+   rules.
+7. Exclude accessory products and investigate missing or suspicious coverage
+   before aggregation. Metal panels often express coverage through panel width
+   and length, while tile may use pieces-per-square or pallet coverage; those
+   formats may require new coverage parsing before prices can be compared per
+   roofing square.
+
+Keep the raw HTML and raw JSONL as audit evidence. Do not overwrite earlier
+batches: geography, store selection, product assortment, and price can all
+change between collection dates.
 
 ## Material taxonomy
 
@@ -240,8 +300,8 @@ pytest -q
 
 - **Live Home Depot scraping is blocked by Akamai Bot Manager** (verified: 403
   on the `requests` path; challenge page on Playwright). Use `--local-html-dir`
-  or a sanctioned unblocker/official feed (see the scrape section above). The
-  parser, normalizer, classifier, and aggregator are all source-agnostic.
+  or a sanctioned unblocker/official feed (see **Capture and ingest** above).
+  The parser, normalizer, classifier, and aggregator are all source-agnostic.
 - Home Depot localizes pricing via cookies/internal endpoints that are not a
   stable public contract; ZIP context is set best-effort. Always treat
   `coverage_flag` and store/ZIP provenance as part of QA.

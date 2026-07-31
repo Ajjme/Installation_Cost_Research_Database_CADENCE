@@ -62,7 +62,14 @@ _ARCHITECTURAL_TERMS = (
 )
 
 _METAL_WORDS = ("metal", "steel", "galvalume", "aluminum")
-_CORRUGATED_TERMS = ("corrugated", "ribbed", "exposed fastener")
+_CORRUGATED_TERMS = (
+    "corrugated",
+    "ribbed",
+    "exposed fastener",
+    "sm-rib",
+    "5v crimp",
+    "5-v crimp",
+)
 
 
 def _normalize(text: Any) -> str:
@@ -103,7 +110,10 @@ def classify_text(text: Any) -> str:
     if "standing seam" in t:
         return "metal_standing_seam"
 
-    if any(term in t for term in _CORRUGATED_TERMS) and any(w in t for w in _METAL_WORDS):
+    is_metal = any(word in t for word in _METAL_WORDS)
+    if is_metal and (
+        any(term in t for term in _CORRUGATED_TERMS) or "roof panel" in t
+    ):
         return "metal_corrugated_panel"
 
     # Tile.

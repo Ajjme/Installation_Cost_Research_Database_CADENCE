@@ -8,8 +8,10 @@ import pytest
 from src.normalize_products import (
     SQFT_PER_SQUARE,
     bulk_discount_pct,
+    load_geo_seed,
     normalize,
     parse_coverage_sqft,
+    parse_panel_dimensions_sqft,
     parse_price,
     price_per_sqft,
     price_per_square,
@@ -46,6 +48,10 @@ def test_parse_price_ignores_bool():
     assert parse_price(True) is None
 
 
+def test_parse_price_treats_nan_as_missing():
+    assert parse_price(float("nan")) is None
+
+
 # --------------------------------------------------------------------------- #
 # Coverage parsing
 # --------------------------------------------------------------------------- #
@@ -68,6 +74,19 @@ def test_parse_coverage_sqft(value, expected):
         assert result is None
     else:
         assert result == pytest.approx(expected)
+
+
+def test_parse_coverage_treats_nan_as_missing():
+    assert parse_coverage_sqft(float("nan")) is None
+
+
+def test_parse_metal_panel_dimensions_sqft():
+    name = "26 in. x 8 ft. Galvanized Steel 5V Crimp Roof Panel"
+    assert parse_panel_dimensions_sqft(name) == pytest.approx(17.3333, abs=1e-4)
+
+
+def test_parse_panel_dimensions_requires_two_dimensions():
+    assert parse_panel_dimensions_sqft("12 ft. Corrugated Steel Roof Panel") is None
 
 
 # --------------------------------------------------------------------------- #
@@ -120,6 +139,14 @@ def _geo():
             }
         ]
     )
+
+
+def test_project_geo_seed_maps_captured_durham_zip():
+    geo = load_geo_seed("config/geo_seed_zips.csv").set_index("zip_code")
+    row = geo.loc["27705"]
+    assert row["state"] == "NC"
+    assert row["cbsa_name"] == "Durham-Chapel Hill, NC"
+    assert row["cbsa_code"] == "20500"
 
 
 def test_normalize_basic_row():
@@ -191,6 +218,25 @@ def test_normalize_missing_coverage_flagged_and_no_imputation():
         isinstance(row["price_per_square"], float) and math.isnan(row["price_per_square"])
     )
     assert row["coverage_flag"] == "missing"
+
+
+def test_normalize_missing_coverage_in_mixed_numeric_column():
+    raw = pd.DataFrame(
+        [
+            {
+                "product_name": "12 ft. Corrugated Steel Roof Panel",
+                "retail_price_per_unit": "42.98",
+            },
+            {
+                "product_name": "26 in. x 8 ft. Galvanized Steel Roof Panel",
+                "retail_price_per_unit": "29.98",
+            },
+        ]
+    )
+
+    out = normalize(raw)
+
+    assert out["coverage_flag"].tolist() == ["missing", "ok"]
 
 
 def test_normalize_suspicious_coverage_flag():

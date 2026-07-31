@@ -8,7 +8,8 @@ This repository supports the CADENCE project's roofing cost research workflow. I
 The codebase is intentionally split between what is already implemented and what is still being researched. The current implementation is focused on public data sources and auditable transformations. It does not yet include proprietary pricing feeds, permitting data, or a full labor-hours productivity model.
 
 ## What is implemented
-
+labor data source
+https://www.bls.gov/oes/tables.htm 
 ### 1. Labor wage mapping prototype
 
 [`mapping_app.py`](mapping_app.py) is a Streamlit app that maps BLS Occupational Employment and Wage Statistics (OEWS) wage data across geographies. It currently:
@@ -97,6 +98,113 @@ Expected inputs:
 - A shapefile folder, currently expected under `geo_shapefiles/`.
 
 The sidebar lets you choose the occupation and wage metric, plus the shapefile attribute used as the geography key.
+
+### Query-ready labor wage export
+
+Install the root dependencies and generate the wage outputs from the repository root:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python export_labor_cost_data.py
+```
+
+The command writes these files under `data_output/labor/`:
+
+- `labor_wages_wide.parquet`: one row per MSA/BOS and occupation, with all six hourly wage metrics and a source level/source area for each metric.
+- `labor_wages_wide.csv`: CSV copy of the wide wage table.
+- `labor_wages_long.parquet`: one row per MSA/BOS, occupation, and wage metric for flexible analytical queries.
+- `labor_geographies.parquet`: GeoParquet boundary dimension keyed by `AREA`.
+- `labor_geography_coverage.csv`: matched, wage-only, and geometry-only area codes.
+
+Every requested metric is resolved independently using local MSA/BOS data, then the area's primary state, then the national value. `SOURCE_LEVEL` is `local`, `state`, `national`, or `unresolved`, and `IS_IMPUTED` identifies state and national substitutions in the long output.
+
+DuckDB can query the Parquet files without importing them into a database:
+
+```sql
+-- Direct lookup across all six metric columns.
+SELECT AREA_TITLE, OCC_TITLE, H_PCT10, H_MEDIAN, H_MEAN
+FROM read_parquet('data_output/labor/labor_wages_wide.parquet')
+WHERE OCC_TITLE = 'Roofers'
+ORDER BY H_MEAN DESC;
+
+-- Compare fallback levels across metrics.
+SELECT WAGE_METRIC, SOURCE_LEVEL, count(*) AS value_count
+FROM read_parquet('data_output/labor/labor_wages_long.parquet')
+GROUP BY WAGE_METRIC, SOURCE_LEVEL
+ORDER BY WAGE_METRIC, SOURCE_LEVEL;
+```
+
+For spatial queries, load DuckDB's spatial extension and join geometry only when needed:
+
+```sql
+INSTALL spatial;
+LOAD spatial;
+
+SELECT wages.AREA_TITLE, wages.OCC_TITLE, wages.H_MEAN, geography.geometry
+FROM read_parquet('data_output/labor/labor_wages_wide.parquet') AS wages
+JOIN read_parquet('data_output/labor/labor_geographies.parquet') AS geography
+	USING (AREA)
+WHERE wages.OCC_TITLE = 'Roofers';
+```
+
+The wage facts use 2025 OEWS areas, while the available boundary file is from 2019 and contains MSA polygons only. Wage rows are never removed because geometry is unavailable. Review `labor_geography_coverage.csv` before assuming complete map coverage; BOS wage rows intentionally have no polygon in this shapefile.
+
+### Labor escalation projections
+
+The labor escalation pipeline uses the consolidated OEWS workbooks under
+`input_data/2021/` through `input_data/2025/` to estimate constrained annual
+wage trends and project the resolved 2025 wages through 2050:
+
+```bash
+.venv/bin/python export_labor_escalation.py
+```
+
+The loader selects cross-industry estimates (`NAICS = 000000`) and classifies
+OEWS area types as national (`1`), state or territory (`2` and `3`), MSA (`4`),
+and balance-of-state (`6`). Historical values use the same metric-specific
+local, state, and national fallback hierarchy as the 2025 wage export.
+
+An annual transition is used only when adjacent years have positive wages and
+the same source level and source area. The raw annual rate is the geometric
+average of the retained changes. Production rates use hierarchical shrinkage:
+local trends are shrunk toward state trends, and state trends are shrunk toward
+occupation-national trends. The default historical weight is `n / (n + 4)`,
+where `n` is the number of valid annual transitions.
+
+Constrained rates are bounded to the occupation/metric 10th-90th percentile
+range and then to `-2%` through `8%` annually. A final documented constraint
+prevents projected percentile wages from crossing through 2050. Every applied
+adjustment and excluded transition remains available in the audit files.
+
+The command writes:
+
+- `labor_wage_projections_2026_2050.parquet`: one row per area, occupation, and projection year, with 2025 base wages plus raw and constrained factors and projected wages for all six metrics.
+- `labor_escalation_rate_audit.parquet`: one row per area, occupation, and metric, with raw and constrained rates, benchmarks, shrinkage weights, bounds, confidence, and adjustment reasons.
+- `labor_escalation_history.parquet`: one row per historical annual transition and metric, with endpoint wages, provenance, inclusion status, and exclusion reason.
+
+Example DuckDB lookup:
+
+```sql
+SELECT
+	AREA_TITLE,
+	OCC_TITLE,
+	PROJECTION_YEAR,
+	H_MEAN_BASE_WAGE,
+	H_MEAN_CONSTRAINED_FACTOR,
+	H_MEAN_CONSTRAINED_PROJECTED_WAGE
+FROM read_parquet(
+	'data_output/labor/labor_wage_projections_2026_2050.parquet'
+)
+WHERE OCC_CODE = '47-2181'
+	AND PROJECTION_YEAR IN (2026, 2030, 2040, 2050)
+ORDER BY AREA, PROJECTION_YEAR;
+```
+
+These values are constrained scenarios extrapolated from four observed annual
+changes, not official BLS forecasts. Keep `MODEL_VERSION` with downstream
+estimates and rebuild the model when a new OEWS year becomes available.
 
 ## Roofing-cost-model usage
 

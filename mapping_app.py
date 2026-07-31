@@ -1,8 +1,17 @@
 import os
-import pandas as pd
+from pathlib import Path
+
 import geopandas as gpd
 import streamlit as st
 import plotly.express as px
+
+from labor_cost_data import (
+    TARGET_OCCUPATIONS,
+    WAGE_METRICS,
+    build_wage_outputs,
+    normalize_code,
+    read_oews_files,
+)
 
 # Set Streamlit page configurations
 st.set_page_config(page_title="CIRCAD Labor Cost Mapper", layout="wide")
@@ -76,68 +85,15 @@ def apply_financial_theme_css():
         unsafe_allow_html=True,
     )
 
-# Define target occupations and wage metrics as requested
-TARGET_OCCUPATIONS = [
-    "Purchasing Managers",
-    "Construction Managers",
-    "Claims Adjusters, Examiners, and Investigators",
-    "Cost Estimators",
-    "Insurance Sales Agents",
-    "Construction Laborers",
-    "Roofers",
-    "Construction and Building Inspectors",
-    "Installation, Maintenance, and Repair Occupations",
-    "First-Line Supervisors of Construction Trades"
-]
-
-WAGE_METRICS = ['H_PCT10', 'H_PCT25', 'H_MEDIAN', 'H_PCT75', 'H_PCT90', 'H_MEAN']
-
 @st.cache_data
-def load_and_compile_bls_data():
-    """
-    Loads MSA, BOS, State, and National Excel files, normalizes columns,
-    and returns individual structured data dictionaries for strict fallback querying.
-    """
-    def clean_dataset(filepath):
-        if not os.path.exists(filepath):
-            st.error(f"File not found: {filepath}. Please ensure it is placed in the 'input_data' folder.")
-            return None
-        
-        df = pd.read_excel(filepath)
-        df.columns = df.columns.str.upper().str.strip()
-        
-        # Filter for only target occupations
-        df = df[df['OCC_TITLE'].isin(TARGET_OCCUPATIONS)].copy()
-        
-        # Coerce wage metrics to numeric, transforming suppression codes (*, #) into NaN
-        for col in WAGE_METRICS:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-                
-        # Clean area and state code strings to force stable string keys
-        for col in ['AREA', 'PRIM_STATE', 'STATE']:
-            if col in df.columns:
-                df[col] = df[col].astype(str).str.strip().str.zfill(7 if col == 'AREA' else 1)
-                
-        return df
-
-    # Load all four baseline layers
-    df_msa = clean_dataset('input_data/MSA_M2025_dl.xlsx')
-    df_bos = clean_dataset('input_data/BOS_M2025_dl.xlsx')
-    df_state = clean_dataset('input_data/state_M2025_dl.xlsx')
-    df_national = clean_dataset('input_data/national_M2025_dl.xlsx')
-    
-    if df_msa is None or df_bos is None or df_state is None or df_national is None:
+def load_resolved_wages():
+    try:
+        frames = read_oews_files(Path("input_data"))
+        wide, _ = build_wage_outputs(frames)
+        return wide
+    except (FileNotFoundError, ValueError) as error:
+        st.error(str(error))
         st.stop()
-
-    # Combine Level 1 granular files (Metropolitan + Nonmetropolitan Balance of State)
-    df_level1 = pd.concat([df_msa, df_bos], ignore_index=True)
-    
-    return {
-        "level1": df_level1,
-        "state": df_state,
-        "national": df_national
-    }
 
 
 apply_financial_theme_css()
@@ -160,8 +116,8 @@ shapefile_id_prop = st.sidebar.text_input("Shapefile Property Name for Area Code
 st.sidebar.markdown("---")
 st.sidebar.caption("Financial theme active: Inter for UI, Source Code Pro for numeric emphasis.")
 
-# Load compiled wage dictionaries
-bls_data = load_and_compile_bls_data()
+# Load every requested wage metric with local, state, and national fallback resolved.
+wage_data = load_resolved_wages()
 
 # Process map if shapefile exists
 if os.path.exists(shapefile_folder_path):
@@ -176,65 +132,36 @@ if os.path.exists(shapefile_folder_path):
             )
             st.stop()
         
-        # FIX: Force shapefile msa7 field to be string and pad leading zeroes to match Excel 'AREA' keys!
-        gdf[shapefile_id_prop] = gdf[shapefile_id_prop].astype(str).str.strip().str.zfill(7)
+        gdf[shapefile_id_prop] = normalize_code(gdf[shapefile_id_prop], width=7)
         
         # Simplify geometry path vertices to speed up web rendering frame rates
         gdf['geometry'] = gdf['geometry'].simplify(tolerance=0.01, preserve_topology=True)
         
-    # --- Execute 3-Level Hierarchy Cross-Walk & Gap Healing ---
-    with st.spinner("Executing spatial fallback calculations for missing blocks..."):
-        # Isolate target occupation segments across files
-        l1_filtered = bls_data["level1"][bls_data["level1"]['OCC_TITLE'] == selected_occ]
-        l2_filtered = bls_data["state"][bls_data["state"]['OCC_TITLE'] == selected_occ]
-        l3_filtered = bls_data["national"][bls_data["national"]['OCC_TITLE'] == selected_occ]
-        
-        # Step A: Link Shapefile rows to Level 1 Data (MSA + Balance of State)
-        gdf_merged = gdf.merge(l1_filtered, left_on=shapefile_id_prop, right_on='AREA', how='left')
-        
-        # Step B: Dynamically determine state for polygons that came up empty
-        # Often the shapefile has a default state attribute, or we map it from the area title text string
-        if 'PRIM_STATE' not in gdf_merged.columns or gdf_merged['PRIM_STATE'].isna().all():
-            # Fallback if PRIM_STATE isn't built into the shapefile attributes natively
-            if 'state' in gdf_merged.columns:
-                gdf_merged['PRIM_STATE'] = gdf_merged['state'].astype(str).str.strip()
-            else:
-                gdf_merged['PRIM_STATE'] = None
+    with st.spinner("Joining resolved wages to current MSA boundaries..."):
+        selected_wages = wage_data[
+            (wage_data["GEOGRAPHY_TYPE"] == "msa")
+            & (wage_data["OCC_TITLE"] == selected_occ)
+        ][["AREA", "AREA_TITLE", selected_metric, f"{selected_metric}_SOURCE_LEVEL"]].rename(
+            columns={f"{selected_metric}_SOURCE_LEVEL": "DATA_SOURCE"}
+        )
+        gdf_merged = gdf.merge(
+            selected_wages,
+            left_on=shapefile_id_prop,
+            right_on="AREA",
+            how="inner",
+        )
+        if gdf_merged.empty:
+            st.error("No 2025 MSA wage areas matched the selected shapefile.")
+            st.stop()
 
-        # Build cross-walk mapping dictionaries from state and national frames for optimized lookups
-        state_fallback_map = dict(zip(l2_filtered['STATE_NAME'].str.upper() if 'STATE_NAME' in l2_filtered.columns else l2_filtered['PRIM_STATE'], l2_filtered[selected_metric]))
-        state_code_fallback_map = dict(zip(l2_filtered['PRIM_STATE'], l2_filtered[selected_metric]))
-        
-        # National baseline number
-        national_value = l3_filtered[selected_metric].values[0] if not l3_filtered.empty else None
-        
-        # Step C: Iterate and heal the target wage column if any specific zone is NaN
-        def heal_gaps(row):
-            val = row[selected_metric]
-            if pd.notna(val):
-                return val, "Level 1: MSA/BOS"
-            
-            # Level 2 Fallback (State level check)
-            state_key = row['PRIM_STATE']
-            if pd.notna(state_key) and state_key in state_code_fallback_map:
-                return state_code_fallback_map[state_key], "Level 2: State"
-            
-            # Alternative string-based state lookup if codes are different
-            if 'area_title' in row and pd.notna(row['area_title']):
-                for st_name, st_val in state_fallback_map.items():
-                    if str(st_name) in str(row['area_title']).upper():
-                        return st_val, "Level 2: State (Name Match)"
-                        
-            # Level 3 Fallback (National baseline calculation)
-            return national_value, "Level 3: National"
-
-        # Apply fallback resolution script across target rows
-        healed_values = gdf_merged.apply(heal_gaps, axis=1, result_type="expand")
-        gdf_merged[selected_metric] = healed_values[0]
-        gdf_merged['DATA_SOURCE'] = healed_values[1]
-        
-        # Fill in visual placeholder metadata for newly healed rows
-        gdf_merged['AREA_TITLE'] = gdf_merged['AREA_TITLE'].fillna(gdf_merged['name'] if 'name' in gdf_merged.columns else "Healed Region")
+        gdf_merged["DATA_SOURCE"] = gdf_merged["DATA_SOURCE"].map(
+            {
+                "local": "Level 1: MSA",
+                "state": "Level 2: State",
+                "national": "Level 3: National",
+                "unresolved": "Unresolved",
+            }
+        )
 
         data_source_counts = (
             gdf_merged['DATA_SOURCE']
