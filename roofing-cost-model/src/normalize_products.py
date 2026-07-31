@@ -196,6 +196,59 @@ def load_geo_seed(path: Optional[str]) -> pd.DataFrame:
     return geo[cols].copy()
 
 
+def load_hud_geo_crosswalk(
+    path: Optional[str], cbsa_names_path: Optional[str] = None
+) -> pd.DataFrame:
+    """Load one dominant ZIP-to-CBSA allocation from a HUD-USPS crosswalk."""
+    cols = ["zip_code", "city", "state", "cbsa_name", "cbsa_code"]
+    if not path or not Path(path).exists():
+        logger.warning("HUD-USPS crosswalk not found at %s; geography will be blank.", path)
+        return pd.DataFrame(columns=cols)
+
+    hud = pd.read_csv(path, dtype={"zip": str, "geoid": str})
+    required = {"zip", "geoid", "city", "state", "res_ratio", "tot_ratio"}
+    missing = required - set(hud.columns)
+    if missing:
+        raise ValueError(
+            "HUD-USPS crosswalk is missing required columns: "
+            + ", ".join(sorted(missing))
+        )
+
+    for ratio in ("res_ratio", "tot_ratio", "bus_ratio", "oth_ratio"):
+        if ratio not in hud.columns:
+            hud[ratio] = pd.NA
+        hud[ratio] = pd.to_numeric(hud[ratio], errors="coerce").fillna(-1.0)
+
+    hud = (
+        hud.sort_values(
+            ["zip", "res_ratio", "tot_ratio", "bus_ratio", "oth_ratio", "geoid"],
+            ascending=[True, False, False, False, False, True],
+        )
+        .drop_duplicates("zip", keep="first")
+        .rename(columns={"zip": "zip_code", "geoid": "cbsa_code"})
+    )
+    hud["city"] = hud["city"].astype("string").str.title()
+
+    hud["cbsa_name"] = pd.NA
+    if cbsa_names_path and Path(cbsa_names_path).exists():
+        names = pd.read_csv(cbsa_names_path, dtype={"AREA": str})
+        required_names = {"AREA", "AREA_TITLE"}
+        if not required_names.issubset(names.columns):
+            raise ValueError("CBSA names file must contain AREA and AREA_TITLE columns.")
+        if "GEOGRAPHY_TYPE" in names.columns:
+            names = names[names["GEOGRAPHY_TYPE"].eq("msa")]
+        names = names[["AREA", "AREA_TITLE"]].drop_duplicates("AREA").copy()
+        names["cbsa_code"] = names["AREA"].str.zfill(7).str[-5:]
+        names = names.rename(columns={"AREA_TITLE": "cbsa_name"})
+        hud = hud.drop(columns="cbsa_name").merge(
+            names[["cbsa_code", "cbsa_name"]], on="cbsa_code", how="left"
+        )
+    elif cbsa_names_path:
+        logger.warning("CBSA names file not found at %s; names will be blank.", cbsa_names_path)
+
+    return hud[cols].copy()
+
+
 def read_jsonl(path: str) -> pd.DataFrame:
     """Read a JSONL file of raw product rows into a DataFrame."""
     rows = []
@@ -307,9 +360,19 @@ def main(argv: Optional[list[str]] = None) -> None:
         help="Output Parquet path. A sibling .csv is also written.",
     )
     parser.add_argument(
+        "--geo-crosswalk",
+        default="data_raw/hud_usps/hud_usps_zip_cbsa_2026_1.csv",
+        help="HUD-USPS ZIP-to-CBSA crosswalk CSV.",
+    )
+    parser.add_argument(
+        "--cbsa-names",
+        default="../data_output/labor/labor_geography_coverage.csv",
+        help="BLS labor geography CSV containing AREA and AREA_TITLE.",
+    )
+    parser.add_argument(
         "--geo-seed",
-        default="config/geo_seed_zips.csv",
-        help="ZIP -> city/state/CBSA seed CSV.",
+        default=None,
+        help="Legacy ZIP geography seed CSV; overrides the HUD crosswalk when set.",
     )
     parser.add_argument("--log-level", default="INFO")
     args = parser.parse_args(argv)
@@ -322,7 +385,11 @@ def main(argv: Optional[list[str]] = None) -> None:
     raw = read_jsonl(args.input)
     logger.info("Read %d raw product rows from %s", len(raw), args.input)
 
-    geo = load_geo_seed(args.geo_seed)
+    geo = (
+        load_geo_seed(args.geo_seed)
+        if args.geo_seed
+        else load_hud_geo_crosswalk(args.geo_crosswalk, args.cbsa_names)
+    )
     normalized = normalize(raw, geo)
     logger.info("Normalized %d rows", len(normalized))
 

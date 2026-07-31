@@ -9,6 +9,7 @@ from src.normalize_products import (
     SQFT_PER_SQUARE,
     bulk_discount_pct,
     load_geo_seed,
+    load_hud_geo_crosswalk,
     normalize,
     parse_coverage_sqft,
     parse_panel_dimensions_sqft,
@@ -147,6 +148,52 @@ def test_project_geo_seed_maps_captured_durham_zip():
     assert row["state"] == "NC"
     assert row["cbsa_name"] == "Durham-Chapel Hill, NC"
     assert row["cbsa_code"] == "20500"
+
+
+def test_hud_crosswalk_uses_dominant_residential_cbsa(tmp_path):
+    crosswalk = tmp_path / "zip_cbsa.csv"
+    pd.DataFrame(
+        [
+            {
+                "zip": "12345",
+                "geoid": "11111",
+                "city": "EXAMPLE",
+                "state": "NC",
+                "res_ratio": 0.25,
+                "bus_ratio": 0.9,
+                "oth_ratio": 0.9,
+                "tot_ratio": 0.4,
+            },
+            {
+                "zip": "12345",
+                "geoid": "22222",
+                "city": "EXAMPLE",
+                "state": "NC",
+                "res_ratio": 0.75,
+                "bus_ratio": 0.1,
+                "oth_ratio": 0.1,
+                "tot_ratio": 0.6,
+            },
+        ]
+    ).to_csv(crosswalk, index=False)
+    names = tmp_path / "cbsa_names.csv"
+    pd.DataFrame(
+        [
+            {
+                "AREA": "0022222",
+                "AREA_TITLE": "Selected CBSA, NC",
+                "GEOGRAPHY_TYPE": "msa",
+            }
+        ]
+    ).to_csv(names, index=False)
+
+    geo = load_hud_geo_crosswalk(str(crosswalk), str(names)).set_index("zip_code")
+
+    assert geo.index.is_unique
+    assert geo.loc["12345", "city"] == "Example"
+    assert geo.loc["12345", "state"] == "NC"
+    assert geo.loc["12345", "cbsa_code"] == "22222"
+    assert geo.loc["12345", "cbsa_name"] == "Selected CBSA, NC"
 
 
 def test_normalize_basic_row():

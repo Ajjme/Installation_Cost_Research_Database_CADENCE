@@ -12,7 +12,12 @@ from typing import Optional
 import pandas as pd
 
 from src.aggregate_prices import OUTPUT_FILENAMES, aggregate_all
-from src.normalize_products import load_geo_seed, normalize, read_jsonl
+from src.normalize_products import (
+    load_geo_seed,
+    load_hud_geo_crosswalk,
+    normalize,
+    read_jsonl,
+)
 from src.retailers.home_depot import (
     _LOCAL_FILENAME_RE,
     ScrapeConfig,
@@ -100,7 +105,9 @@ def process_batch(
     *,
     batch_name: Optional[str] = None,
     categories_config: str = "config/home_depot_categories.yml",
-    geo_seed: str = "config/geo_seed_zips.csv",
+    geo_crosswalk: str = "data_raw/hud_usps/hud_usps_zip_cbsa_2026_1.csv",
+    cbsa_names: str = "../data_output/labor/labor_geography_coverage.csv",
+    geo_seed: Optional[str] = None,
     raw_root: str = "data_raw/home_depot",
     intermediate_dir: str = "data_intermediate",
     output_root: str = "data_output/home_depot",
@@ -139,7 +146,12 @@ def process_batch(
     if raw.empty:
         raise ValueError(f"No products were extracted from {source_dir}")
 
-    normalized = normalize(raw, load_geo_seed(geo_seed))
+    geo = (
+        load_geo_seed(geo_seed)
+        if geo_seed
+        else load_hud_geo_crosswalk(geo_crosswalk, cbsa_names)
+    )
+    normalized = normalize(raw, geo)
     aggregates = aggregate_all(normalized)
     if aggregates["national"].empty:
         raise ValueError(
@@ -174,7 +186,19 @@ def main(argv: Optional[list[str]] = None) -> None:
     parser.add_argument("--local-html-dir", required=True)
     parser.add_argument("--batch-name", default=None)
     parser.add_argument("--categories-config", default="config/home_depot_categories.yml")
-    parser.add_argument("--geo-seed", default="config/geo_seed_zips.csv")
+    parser.add_argument(
+        "--geo-crosswalk",
+        default="data_raw/hud_usps/hud_usps_zip_cbsa_2026_1.csv",
+    )
+    parser.add_argument(
+        "--cbsa-names",
+        default="../data_output/labor/labor_geography_coverage.csv",
+    )
+    parser.add_argument(
+        "--geo-seed",
+        default=None,
+        help="Legacy geography seed; overrides the HUD crosswalk when set.",
+    )
     parser.add_argument("--raw-root", default="data_raw/home_depot")
     parser.add_argument("--intermediate-dir", default="data_intermediate")
     parser.add_argument("--output-root", default="data_output/home_depot")
@@ -189,6 +213,8 @@ def main(argv: Optional[list[str]] = None) -> None:
         args.local_html_dir,
         batch_name=args.batch_name,
         categories_config=args.categories_config,
+        geo_crosswalk=args.geo_crosswalk,
+        cbsa_names=args.cbsa_names,
         geo_seed=args.geo_seed,
         raw_root=args.raw_root,
         intermediate_dir=args.intermediate_dir,

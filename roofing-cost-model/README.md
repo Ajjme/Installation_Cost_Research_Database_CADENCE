@@ -74,6 +74,13 @@ such as `26 in. x 8 ft.`. Products that show only panel length remain in the
 normalized files with their unit price and `coverage_flag = missing`, but are
 excluded from per-square aggregates rather than receiving an assumed width.
 
+ZIP geography comes from the latest downloaded HUD-USPS ZIP-to-CBSA crosswalk
+in `data_raw/hud_usps/`. When a ZIP overlaps multiple CBSAs, the pipeline assigns
+the CBSA with the largest residential-address ratio, using total, business, and
+other-address ratios as deterministic tie-breakers. City and state come from
+HUD; CBSA titles are joined from the BLS labor geography output so material and
+labor records use the same area names and codes.
+
 Confirm the log reports `Extracted N products` for every HTML file. If a file
 reports `No products extracted`, recapture or update that page before treating
 the dated batch as complete.
