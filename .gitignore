@@ -16,6 +16,20 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Commit only the source formats required by the labor mapping app.
+input_data/**
+!input_data/**/
+!input_data/**/*.xlsx
+
+geo_shapefiles/**
+!geo_shapefiles/**/
+!geo_shapefiles/**/*.shp
+!geo_shapefiles/**/*.shx
+!geo_shapefiles/**/*.dbf
+!geo_shapefiles/**/*.prj
+!geo_shapefiles/**/*.cpg
+!geo_shapefiles/**/*.qpj
+
 # Nested project virtualenv and notebook checkpoints
 roofing-cost-model/.venv/
 roofing-cost-model/notebooks/.ipynb_checkpoints/
