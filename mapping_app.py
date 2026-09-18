@@ -202,10 +202,16 @@ if os.path.exists(shapefile_folder_path):
         )
         fig.update_geos(
             fitbounds="locations",
-            visible=False,
+            visible=True,
             bgcolor=THEME_COLORS["secondary_background"],
+            showland=True,
+            landcolor="#f1f5f9",
+            showlakes=True,
+            lakecolor=THEME_COLORS["secondary_background"],
+            showsubunits=True,
             subunitcolor="#94a3b8",
-            showcountries=False,
+            showcountries=True,
+            countrycolor="#64748b",
             showframe=False,
         )
         fig.update_layout(
