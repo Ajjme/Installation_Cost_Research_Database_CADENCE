@@ -5,6 +5,7 @@ from labor_cost_data import (
     TARGET_OCCUPATION_CODES,
     TARGET_OCCUPATIONS,
     WAGE_METRICS,
+    build_state_wage_output,
     build_wage_outputs,
     read_consolidated_oews_file,
 )
@@ -99,6 +100,32 @@ def test_resolves_each_metric_independently(oews_frames):
     metric_rows = long[(long["AREA"] == "0012345") & (long["OCC_TITLE"] == target)]
     assert metric_rows.set_index("WAGE_METRIC").loc["H_PCT10", "IS_IMPUTED"]
     assert not metric_rows.set_index("WAGE_METRIC").loc["H_MEAN", "IS_IMPUTED"]
+
+
+def test_resolves_state_metrics_to_national_and_preserves_year(oews_frames):
+    states = build_state_wage_output(oews_frames, data_year=2024)
+    target = TARGET_OCCUPATIONS[0]
+    state = states[states["OCC_TITLE"] == target].iloc[0]
+
+    assert len(states) == len(TARGET_OCCUPATIONS)
+    assert state["DATA_YEAR"] == 2024
+    assert state["H_MEAN"] == 37
+    assert state["H_MEAN_SOURCE_LEVEL"] == "state"
+    assert state["H_PCT25"] == 30
+    assert state["H_PCT25_SOURCE_LEVEL"] == "national"
+    assert state["H_PCT25_SOURCE_AREA"] == "0000000"
+    missing_state_occupation = states[
+        states["OCC_TITLE"] == TARGET_OCCUPATIONS[1]
+    ].iloc[0]
+    assert missing_state_occupation["H_MEAN"] == 31
+    assert missing_state_occupation["H_MEAN_SOURCE_LEVEL"] == "national"
+
+
+def test_build_wage_outputs_preserves_selected_year(oews_frames):
+    wide, long = build_wage_outputs(oews_frames, data_year=2022)
+
+    assert set(wide["DATA_YEAR"]) == {2022}
+    assert set(long["DATA_YEAR"]) == {2022}
 
 
 def test_rejects_duplicate_local_keys(oews_frames):

@@ -2,15 +2,17 @@ import os
 from pathlib import Path
 
 import geopandas as gpd
+import pandas as pd
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
 
 from labor_cost_data import (
     TARGET_OCCUPATIONS,
     WAGE_METRICS,
+    build_state_wage_output,
     build_wage_outputs,
     normalize_code,
-    read_oews_files,
+    read_consolidated_oews_file,
 )
 
 # Set Streamlit page configurations
@@ -57,7 +59,7 @@ def apply_financial_theme_css():
         }}
 
         h1, h2, h3 {{
-            letter-spacing: -0.02em;
+            letter-spacing: 0;
         }}
 
         [data-testid="stMetricValue"] {{
@@ -86,11 +88,13 @@ def apply_financial_theme_css():
     )
 
 @st.cache_data
-def load_resolved_wages():
+def load_resolved_wages(year: int):
     try:
-        frames = read_oews_files(Path("input_data"))
-        wide, _ = build_wage_outputs(frames)
-        return wide
+        path = Path("input_data") / str(year) / f"all_data_M_{year}.xlsx"
+        frames = read_consolidated_oews_file(path)
+        local_wages, _ = build_wage_outputs(frames, data_year=year)
+        state_wages = build_state_wage_output(frames, data_year=year)
+        return local_wages, state_wages
     except (FileNotFoundError, ValueError) as error:
         st.error(str(error))
         st.stop()
@@ -107,6 +111,11 @@ st.markdown(
 
 # Sidebar Selection Controls
 st.sidebar.header("Map Controls")
+selected_year = st.sidebar.select_slider(
+    "Select OEWS Year:",
+    options=[2021, 2022, 2023, 2024, 2025],
+    value=2025,
+)
 selected_occ = st.sidebar.selectbox("Select Occupation Group:", TARGET_OCCUPATIONS)
 selected_metric = st.sidebar.selectbox("Select Wage Metric:", WAGE_METRICS, index=5) # Default to H_MEAN
 
@@ -117,7 +126,7 @@ st.sidebar.markdown("---")
 st.sidebar.caption("Financial theme active: Inter for UI, Source Code Pro for numeric emphasis.")
 
 # Load every requested wage metric with local, state, and national fallback resolved.
-wage_data = load_resolved_wages()
+wage_data, state_wage_data = load_resolved_wages(selected_year)
 
 # Process map if shapefile exists
 if os.path.exists(shapefile_folder_path):
@@ -137,7 +146,7 @@ if os.path.exists(shapefile_folder_path):
         # Simplify geometry path vertices to speed up web rendering frame rates
         gdf['geometry'] = gdf['geometry'].simplify(tolerance=0.01, preserve_topology=True)
         
-    with st.spinner("Joining resolved wages to current MSA boundaries..."):
+    with st.spinner(f"Joining {selected_year} wages to the map boundaries..."):
         selected_wages = wage_data[
             (wage_data["GEOGRAPHY_TYPE"] == "msa")
             & (wage_data["OCC_TITLE"] == selected_occ)
@@ -151,7 +160,9 @@ if os.path.exists(shapefile_folder_path):
             how="inner",
         )
         if gdf_merged.empty:
-            st.error("No 2025 MSA wage areas matched the selected shapefile.")
+            st.error(
+                f"No {selected_year} MSA wage areas matched the selected shapefile."
+            )
             st.stop()
 
         gdf_merged["DATA_SOURCE"] = gdf_merged["DATA_SOURCE"].map(
@@ -162,6 +173,31 @@ if os.path.exists(shapefile_folder_path):
                 "unresolved": "Unresolved",
             }
         )
+        selected_state_wages = state_wage_data[
+            state_wage_data["OCC_TITLE"] == selected_occ
+        ][
+            [
+                "PRIM_STATE",
+                "AREA",
+                "AREA_TITLE",
+                selected_metric,
+                f"{selected_metric}_SOURCE_LEVEL",
+            ]
+        ].rename(columns={f"{selected_metric}_SOURCE_LEVEL": "DATA_SOURCE"})
+        selected_state_wages["DATA_SOURCE"] = selected_state_wages["DATA_SOURCE"].map(
+            {
+                "state": "State estimate",
+                "national": "National fallback",
+                "unresolved": "Unresolved",
+            }
+        )
+
+        visible_values = pd.concat(
+            [gdf_merged[selected_metric], selected_state_wages[selected_metric]],
+            ignore_index=True,
+        ).dropna()
+        color_min = visible_values.min()
+        color_max = visible_values.max()
 
         data_source_counts = (
             gdf_merged['DATA_SOURCE']
@@ -174,34 +210,54 @@ if os.path.exists(shapefile_folder_path):
     col1, col2 = st.columns([3, 1])
     
     with col1:
-        st.subheader(f"National Breakdown: {selected_occ} ({selected_metric})")
-        
-        # Generate Interactive Plotly Choropleth Map using shapefile geometry interface
-        fig = px.choropleth(
-            gdf_merged,
-            geojson=gdf_merged.geometry.__geo_interface__,
-            locations=gdf_merged.index,
-            color=selected_metric,
-            custom_data=["AREA_TITLE", "AREA", "DATA_SOURCE"],
-            color_continuous_scale=FINANCIAL_SCALE,
-            labels={selected_metric: "Hourly Rate ($)"},
-            projection="albers usa"
+        st.subheader(
+            f"{selected_year} National Breakdown: {selected_occ} ({selected_metric})"
         )
-        fig.update_traces(
-            hovertemplate=(
-                "<b>%{customdata[0]}</b><br>"
-                "Hourly Rate: $%{z:,.2f}<br>"
-                "Resolved By: %{customdata[2]}<extra></extra>"
-            ),
-            hoverlabel={
-                "bgcolor": "#ffffff",
-                "bordercolor": THEME_COLORS["border"],
-                "font": {"family": "Inter", "color": THEME_COLORS["text"]},
-                "align": "left",
-            },
+        
+        fig = go.Figure()
+        fig.add_trace(
+            go.Choropleth(
+                locations=selected_state_wages["PRIM_STATE"],
+                z=selected_state_wages[selected_metric],
+                locationmode="USA-states",
+                customdata=selected_state_wages[
+                    ["AREA_TITLE", "AREA", "DATA_SOURCE"]
+                ],
+                coloraxis="coloraxis",
+                marker_line_color="#ffffff",
+                marker_line_width=0.7,
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b><br>"
+                    "Geography: State<br>"
+                    f"OEWS Year: {selected_year}<br>"
+                    "Hourly Rate: $%{z:,.2f}<br>"
+                    "Resolved By: %{customdata[2]}<extra></extra>"
+                ),
+                name="State underlay",
+            )
+        )
+        fig.add_trace(
+            go.Choropleth(
+                geojson=gdf_merged.geometry.__geo_interface__,
+                locations=gdf_merged.index,
+                z=gdf_merged[selected_metric],
+                customdata=gdf_merged[["AREA_TITLE", "AREA", "DATA_SOURCE"]],
+                coloraxis="coloraxis",
+                marker_line_color="#334155",
+                marker_line_width=0.8,
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b><br>"
+                    "Geography: MSA<br>"
+                    f"OEWS Year: {selected_year}<br>"
+                    "Hourly Rate: $%{z:,.2f}<br>"
+                    "Resolved By: %{customdata[2]}<extra></extra>"
+                ),
+                name="MSA",
+            )
         )
         fig.update_geos(
-            fitbounds="locations",
+            scope="usa",
+            projection_type="albers usa",
             visible=True,
             bgcolor=THEME_COLORS["secondary_background"],
             showland=True,
@@ -220,27 +276,43 @@ if os.path.exists(shapefile_folder_path):
             font={"family": "Inter", "color": THEME_COLORS["text"]},
             paper_bgcolor=THEME_COLORS["background"],
             plot_bgcolor=THEME_COLORS["background"],
-            coloraxis_colorbar={
-                "title": "Hourly Rate ($)",
-                "ticksuffix": "",
-                "outlinecolor": THEME_COLORS["border"],
+            coloraxis={
+                "colorscale": FINANCIAL_SCALE,
+                "cmin": color_min,
+                "cmax": color_max,
+                "colorbar": {
+                    "title": "Hourly Rate ($)",
+                    "ticksuffix": "",
+                    "outlinecolor": THEME_COLORS["border"],
+                },
             },
+            hoverlabel={
+                "bgcolor": "#ffffff",
+                "bordercolor": THEME_COLORS["border"],
+                "font": {"family": "Inter", "color": THEME_COLORS["text"]},
+                "align": "left",
+            },
+            showlegend=False,
         )
         
         st.plotly_chart(fig, use_container_width=True)
+        st.caption(
+            "State estimates form the background layer; MSA estimates take visual priority. "
+            "The 2019 MSA boundaries are reused for every selected OEWS year."
+        )
         
     with col2:
-        st.subheader("Regional Summary Statistics")
+        st.subheader("MSA Summary Statistics")
         st.metric(label="Highest Hourly Rate Found", value=f"${gdf_merged[selected_metric].max():.2f}")
         st.metric(label="Median Hourly Rate Found", value=f"${gdf_merged[selected_metric].median():.2f}")
         st.metric(label="Lowest Hourly Rate Found", value=f"${gdf_merged[selected_metric].min():.2f}")
         
         st.markdown("---")
-        st.subheader("Fallback Source Coverage")
+        st.subheader("MSA Fallback Coverage")
         st.dataframe(data_source_counts, use_container_width=True, hide_index=True, height=170)
 
         st.markdown("---")
-        st.subheader("Regional Wage Ranking")
+        st.subheader("MSA Wage Ranking")
         st.dataframe(
             gdf_merged[['AREA_TITLE', selected_metric, 'DATA_SOURCE']]
             .dropna()

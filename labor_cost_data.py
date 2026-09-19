@@ -153,6 +153,83 @@ def _assert_unique(frame: pd.DataFrame, keys: list[str], label: str) -> None:
         raise ValueError(f"Duplicate {label} keys found: {examples}")
 
 
+def build_state_wage_output(
+    frames: Mapping[str, pd.DataFrame],
+    data_year: int = 2025,
+) -> pd.DataFrame:
+    missing_frames = {"state", "national"}.difference(frames)
+    if missing_frames:
+        raise ValueError(f"Missing OEWS frames: {', '.join(sorted(missing_frames))}")
+
+    state = clean_oews_frame(frames["state"], "state")
+    national = clean_oews_frame(frames["national"], "national")
+    target_codes = set(TARGET_OCCUPATION_CODES.values())
+    state_areas = state[
+        ["AREA", "AREA_TITLE", "PRIM_STATE", "GEOGRAPHY_TYPE"]
+    ].drop_duplicates()
+    _assert_unique(state_areas, ["PRIM_STATE"], "state area")
+    targets = pd.DataFrame(
+        [
+            {"OCC_CODE": code, "OCC_TITLE": title}
+            for title, code in TARGET_OCCUPATION_CODES.items()
+        ]
+    )
+    state_grid = state_areas.merge(targets, how="cross")
+    state_targets = state[state["OCC_CODE"].isin(target_codes)].copy()
+    national = national[national["OCC_CODE"].isin(target_codes)].copy()
+    _assert_unique(state_targets, ["PRIM_STATE", "OCC_CODE"], "state wage")
+    _assert_unique(national, ["OCC_CODE"], "national wage")
+    missing_codes = target_codes.difference(national["OCC_CODE"])
+    if missing_codes:
+        raise ValueError(
+            "National data is missing target occupation codes: "
+            + ", ".join(sorted(missing_codes))
+        )
+
+    resolved = state_grid.merge(
+        state_targets[["PRIM_STATE", "OCC_CODE", *WAGE_METRICS]],
+        on=["PRIM_STATE", "OCC_CODE"],
+        how="left",
+    )
+    national_columns = {metric: f"{metric}__NATIONAL" for metric in WAGE_METRICS}
+    resolved = resolved.merge(
+        national[["AREA", "OCC_CODE", *WAGE_METRICS]].rename(
+            columns={"AREA": "NATIONAL_SOURCE_AREA", **national_columns}
+        ),
+        on="OCC_CODE",
+        how="left",
+    )
+
+    for metric in WAGE_METRICS:
+        state_value = resolved[metric]
+        national_value = resolved[f"{metric}__NATIONAL"]
+        resolved[metric] = state_value.where(state_value.notna(), national_value)
+        resolved[f"{metric}_SOURCE_LEVEL"] = state_value.notna().map(
+            {True: "state", False: "national"}
+        )
+        resolved[f"{metric}_SOURCE_AREA"] = resolved["AREA"].where(
+            state_value.notna(), resolved["NATIONAL_SOURCE_AREA"]
+        )
+
+    resolved["DATA_YEAR"] = data_year
+    output_columns = [
+        "DATA_YEAR",
+        "GEOGRAPHY_TYPE",
+        "AREA",
+        "AREA_TITLE",
+        "PRIM_STATE",
+        "OCC_CODE",
+        "OCC_TITLE",
+    ]
+    for metric in WAGE_METRICS:
+        output_columns.extend(
+            [metric, f"{metric}_SOURCE_LEVEL", f"{metric}_SOURCE_AREA"]
+        )
+    return resolved[output_columns].sort_values(["PRIM_STATE", "OCC_TITLE"]).reset_index(
+        drop=True
+    )
+
+
 def build_wage_outputs(
     frames: Mapping[str, pd.DataFrame],
     data_year: int = 2025,

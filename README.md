@@ -8,17 +8,21 @@ This repository supports the CADENCE project's roofing cost research workflow. I
 The codebase is intentionally split between what is already implemented and what is still being researched. The current implementation is focused on public data sources and auditable transformations. It does not yet include proprietary pricing feeds, permitting data, or a full labor-hours productivity model.
 
 ## What is implemented
-labor data source
-https://www.bls.gov/oes/tables.htm 
+
+Labor data source: [BLS OEWS tables](https://www.bls.gov/oes/tables.htm)
+
 ### 1. Labor wage mapping prototype
 
 [`mapping_app.py`](mapping_app.py) is a Streamlit app that maps BLS Occupational Employment and Wage Statistics (OEWS) wage data across geographies. It currently:
 
-- Loads MSA, balance-of-state, state, and national Excel tables from `input_data/`.
+- Loads annual MSA, balance-of-state, state, and national records for 2021-2025
+	from the consolidated OEWS workbooks under `input_data/`.
 - Filters to a fixed set of target occupations, including roofers, construction laborers, and first-line supervisors.
-- Joins those wages to polygons from the shapefile folder selected in the sidebar.
+- Joins MSA wages to polygons from the shapefile folder selected in the sidebar
+	and displays Plotly state polygons as an underlay.
 - Applies a three-level fallback hierarchy when local values are suppressed: MSA/BOS, then state, then national.
-- Renders an interactive Plotly choropleth and summary tables for the selected wage metric.
+- Renders an interactive Plotly choropleth and MSA summary tables for the selected
+	year, occupation, and wage metric.
 
 ### 2. Roofing material price pipeline
 
@@ -94,10 +98,22 @@ streamlit run mapping_app.py
 
 Expected inputs:
 
-- BLS Excel files in `input_data/` named like `MSA_M2025_dl.xlsx`, `BOS_M2025_dl.xlsx`, `state_M2025_dl.xlsx`, and `national_M2025_dl.xlsx`.
-- A shapefile folder, currently expected under `geo_shapefiles/`.
+- Consolidated BLS Excel files named `all_data_M_YYYY.xlsx` under
+	`input_data/YYYY/` for 2021 through 2025.
+- The MSA shapefile folder under `geo_shapefiles/`.
 
-The sidebar lets you choose the occupation and wage metric, plus the shapefile attribute used as the geography key.
+The sidebar lets you choose the OEWS year, occupation, and wage metric, plus the
+shapefile attribute used as the geography key. The map draws state estimates
+first and opaque MSA estimates above them, so MSA values take visual priority.
+Both layers use the same wage color scale. Rankings, summary statistics, and
+fallback counts remain MSA-only to avoid double-counting the overlapping state
+and MSA layers.
+
+The same 2019 MSA boundary file is reused for every wage year. State boundaries
+come from Plotly's built-in U.S. state geometry. This provides a state underlay,
+not a non-overlapping geographic mosaic: full state polygons remain beneath the
+MSAs. Balance-of-state wage records participate in labor exports and fallback
+logic but are not mapped because the repository does not contain BOS polygons.
 
 ### Query-ready labor wage export
 
